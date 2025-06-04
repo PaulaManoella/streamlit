@@ -5,8 +5,6 @@ from urllib.request import urlopen
 import matplotlib.pyplot as plt
 import numpy as np
 
-import dash
-from dash import html, dcc
 import plotly.express as px
 
 
