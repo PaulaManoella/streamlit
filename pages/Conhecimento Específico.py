@@ -1,5 +1,5 @@
 import streamlit as st
-from app import *
+from main import *
 
 st.markdown("""
 <style>
