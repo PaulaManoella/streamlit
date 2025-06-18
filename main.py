@@ -4,9 +4,9 @@ from io import BytesIO
 from urllib.request import urlopen
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import FormatStrFormatter
+from textwrap import fill
 
-import dash
-from dash import html, dcc
 import plotly.express as px
 
 
@@ -189,7 +189,7 @@ for curso, file_name in zip(cod_curso,questions_sub_file_name):
 for col in QE_data_2023.columns:
   QE_data_2023[col] = QE_data_2023[col].fillna(0).astype(int)
 
-def plot_average_graph(course_code: int, questions_list):
+def plot_average_graph(course_code: int, questions_list, question_text):
     course_ufpa_df = QE_data_2023[
         (QE_data_2023["CO_CURSO"] == course_code) &
         (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
@@ -204,21 +204,31 @@ def plot_average_graph(course_code: int, questions_list):
     question_labels = [q.replace('QE_I', '') for q in questions_list]
     colors = ['#00712D' if val == max(questions_average) else '#F09319' if val == min(questions_average) else '#81A263' for val in questions_average]
 
-    print(question_labels)
-    graph = px.bar(x=question_labels, 
+   # question_text = ['text A', 'text B']
+    df_question_text= pd.DataFrame({'text_qe': question_text})
+    graph = px.bar(df_question_text, x=question_labels, 
                    y=questions_average, 
                    color=colors, 
                    color_discrete_map="identity", 
-                   text=questions_average)
+                   text=questions_average,
+                   hover_data=['text_qe'])
     
     graph.update_layout(
     xaxis_type='category',
     xaxis=dict(
         categoryorder='array',
         categoryarray=question_labels
+    ),
+    hoverlabel=dict(
+        bgcolor="white",
+        font_size=16,
+        namelength = -1,
+        align='left'
     ))
 
-    graph.update_traces(textposition='outside')
+    graph.update_traces(textposition='outside',
+                        hovertemplate="<b>Questão: </b> %{customdata[0]}",
+                        customdata=df_question_text[["text_qe"]].values)
 
     return graph
 
@@ -275,3 +285,335 @@ def plot_count_graph(course_code: int, questions_list) -> None: #, question_code
                     showlegend=False)
 
   return fig
+
+def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, absolute_graph=True) -> None:
+
+    #sk_national_df é o dataframe filtrado a partir do valor de CO_GRUPO informado (NACIONAL)
+    sk_national_df = Enade_2023[Enade_2023["CO_GRUPO"] == group_code]
+
+    #sk_ufpa_df é o dataframe filtrado a partir do valor de CO_CURSO informado (UFPA)
+    sk_ufpa_df = sk_national_df[sk_national_df["CO_CURSO"] == course_code]
+
+    questions_subjects_df = pd.read_csv(QUESTIONS_SUBJECTS_URL + COURSE_CODES[course_code][2] + "_questions_subjects.csv", sep=";") #, encoding='latin-1'
+
+    subject_score_ufpa  = get_score_per_subject(questions_subjects_df, sk_ufpa_df)
+    subject_score_national = get_score_per_subject(questions_subjects_df, sk_national_df)
+
+    merged_score_df = pd.DataFrame({"Nota UFPA (%)":  subject_score_ufpa["Nota (%)"],
+                                    "Nota Enade (%)": subject_score_national["Nota (%)"]
+                                    }).set_index(subject_score_national["Conteúdo"])
+
+    # Função lambda para calcular razão de acerto (axis=0: Aplicar o cálculo "por coluna"; axis=1: Aplicar o cálculo "em linha")
+    ratio = lambda col: (col["Nota UFPA (%)"] / col["Nota Enade (%)"]).round(2)
+    merged_score_df["Razão"] = merged_score_df.apply(ratio, axis=1)
+
+    # # Configurações de formatação do gráfico
+    # plt.rcParams.update({"text.usetex": True})
+    # plt.rcParams["font.family"] = "Times New Roman"
+    # plt.rcParams["font.size"] = 12
+    
+    if ratio_graph:
+        title = (
+            f"Razão do percentual de acerto UFPA-Brasil em {COURSE_CODES[course_code][1]} "
+            f"- {COURSE_CODES[course_code][3]} por tema no Enade 2023"
+        )
+
+        fig1, ax = plt.subplots(figsize=(8, 8))
+
+        ax.spines[['top', 'right']].set_visible(False)
+        ax.axvline(x=1.0, color="red")
+        ax.grid(axis='x', color='white', linestyle='-')
+        ax.set_xlabel("Razão do percentual de acerto")
+
+        merged_score_df.sort_values(by=["Razão"], inplace=True)
+        merged_score_df = merged_score_df[merged_score_df["Razão"].notnull()]
+
+        labels = [
+            fill(x, len(x) // 2 + 5) if len(x) > 60 else x
+            for x in merged_score_df.index
+        ]
+
+        plt.barh(labels, merged_score_df["Razão"], color='k', height=0.6)
+
+        r = 0.2
+        min_xlim = round(min(merged_score_df["Razão"]) / r) * r
+        xticks = np.linspace(min_xlim - r, 2 - min_xlim + r, 9)
+        ax.set_xticks(xticks)
+        ax.set_xticklabels([str(val) for val in xticks])
+        ax.xaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+
+        for tick_label in ax.get_yticklabels():
+            if "\n" in tick_label.get_text():
+                tick_label.set_fontsize(12)
+
+        if subject_score_national.shape[0] > 16:
+            fig1.set_size_inches(8, 12)
+
+        plt.xlim(min_xlim - r, 2 - min_xlim + r)
+
+        fig1.suptitle(title, fontsize=15, x=0.25, y=0.93)  
+    
+    if absolute_graph:
+        fig2, ax = plt.subplots(figsize=(8, 8))
+        ax.spines[['top', 'right']].set_visible(False)
+        ax.grid(axis='x', color='white', linestyle='-')
+        ax.set_xlabel("Percentual de acerto")
+
+        title = (
+            f"Percentual de acerto por tema em {COURSE_CODES[course_code][1]} "
+            f"{COURSE_CODES[course_code][3]} no Enade 2023"
+        )
+
+        merged_score_df.sort_values(by=["Nota UFPA (%)", "Razão"], ascending=False, inplace=True)
+        merged_score_df_filtered = merged_score_df[merged_score_df["Nota UFPA (%)"] != 0]
+
+        ind = np.arange(merged_score_df_filtered.shape[0])
+        width = 0.35
+
+        labels = [
+            fill(x, len(x) // 2 + 5) if len(x) > 60 else x
+            for x in merged_score_df_filtered.index
+        ]
+
+        # Gráfico de Barras representando a UFPA e o Brasil
+        ax.barh(ind, merged_score_df_filtered["Nota UFPA (%)"], width, color='dodgerblue', label="UFPA")
+        ax.barh(ind + width, merged_score_df_filtered["Nota Enade (%)"], width, color='mediumspringgreen', label="Brasil")
+
+        ax.set(yticks=ind + width / 1, yticklabels=labels)
+        ax.legend(fontsize="large", loc='lower right', fancybox=True, shadow=True)
+
+        for tick_label in ax.get_yticklabels():
+            if "\n" in tick_label.get_text():
+                tick_label.set_fontsize(12)
+
+        if subject_score_national.shape[0] > 16:
+            fig2.set_size_inches(8, 12)
+
+        plt.xlim(0, 100)
+        plt.gca().invert_yaxis()
+
+        fig2.suptitle(title, fontsize=18, x=0.28, y=0.93)
+        
+    return fig1, fig2
+       
+def get_subjects_per_question(questions_subjects_df: pd.DataFrame) -> pd.Series:
+
+    subjects_columns = ["FIRST_SUBJECT", "SECOND_SUBJECT", "THIRD_SUBJECT"]
+
+    subjects_per_question = (
+        questions_subjects_df[subjects_columns]
+        .stack()
+        .value_counts()
+        .sort_index()
+        .astype(int)
+    )
+    return subjects_per_question.values
+
+
+def get_invalid_subjects(questions_subjects_df: pd.DataFrame) -> list:
+    invalid_subjects = questions_subjects_df.groupby("FIRST_SUBJECT")["VALIDITY"].any()
+    invalid_subjects = invalid_subjects[~invalid_subjects].index.tolist()
+    return invalid_subjects
+
+
+def get_score_per_subject(questions_subjects_df: pd.DataFrame, df: pd.DataFrame) -> pd.DataFrame:
+
+    # Obtém uma lista de todos os temas distintos
+    subjects = questions_subjects_df[["FIRST_SUBJECT","SECOND_SUBJECT","THIRD_SUBJECT"]].values.ravel('K')
+    subjects = pd.Series(subjects).dropna().sort_values().unique()
+
+    # Inicializa o DataFrame para armazenar os resultados dos assuntos
+    subjects_score = pd.DataFrame({"Conteúdo" : subjects, "Acertos" : 0})
+
+    # Colunas de questões relevantes
+    question_columns = ["DS_VT_ACE_OCE", "DS_VT_ACE_OFG"]
+
+    # Seleciona as respostas marcadas pelos participantes
+    marked_keys = df[question_columns[0]]
+
+    # Itera sobre as linhas do DataFrame de assuntos e contabiliza os acertos
+    for index in range(questions_subjects_df.shape[0]):
+        # Obtém os temas relacionados a uma questão específica
+        subject_columns = questions_subjects_df.loc[index, ["FIRST_SUBJECT", "SECOND_SUBJECT", "THIRD_SUBJECT"]]
+        subjects_to_update = subject_columns.dropna().values
+
+        # Contabiliza os acertos para o(s) tema(s) relacionado(s) à questão atual
+        result = marked_keys[marked_keys.str[index] == '1'].shape[0]
+
+       # result = marked_keys[marked_keys.str[index].eq(1)].shape[0]
+        subjects_score.loc[subjects_score["Conteúdo"].isin(subjects_to_update), "Acertos"] += result
+
+    # Calcula a nota em porcentagem para cada tema
+    subjects_per_question = get_subjects_per_question(questions_subjects_df)
+    subject_score_column = subjects_score["Acertos"] * 100 / (subjects_per_question * df.shape[0])
+    subjects_score["Nota (%)"] = subject_score_column.round(2)
+
+    # Identifica e remove temas inválidos
+    invalid_subjects = get_invalid_subjects(questions_subjects_df)
+    subjects_score = subjects_score[~subjects_score["Conteúdo"].isin(invalid_subjects)]
+
+    return subjects_score
+
+#PLOTANDO TABELA
+def show_best_hei_ranking_table(group_code:int, course_code:int, public_only:bool) -> None: #to_latex:bool = False
+    """
+    Exibe a tabela de classificação das melhores Instituições de Ensino Superior (IES)
+    por tema, levando em consideração o desempenho dos cursos do grupo especificado.
+
+    Parameters:
+    ----------
+    group_code : int
+        Código do grupo a ser analisado.
+    public_only : bool
+        Flag indicando se devem ser consideradas apenas universidades públicas.
+    to_latex : bool, optional
+        Flag indicando se a tabela deve ser convertida para o formato LaTeX.
+        O padrão é False.
+
+    Returns:
+    -------
+    None
+
+    Examples:
+    -------
+    >>> show_best_hei_ranking_table(4006)
+    """
+
+    # Carrega o DataFrame questions_subjects_df a partir de um arquivo CSV
+
+    questions_subjects_df = pd.read_csv(QUESTIONS_SUBJECTS_URL
+                                        + COURSE_CODES[course_code][2]
+                                        + "_questions_subjects.csv", sep=";")
+
+    # Carrega o DataFrame hei_df a partir de um arquivo CSV
+    hei_df = pd.read_csv(HEI_CODES_URL)
+    hei_dict = dict(hei_df.values)
+
+
+    # Extrai os temas únicos do DataFrame questions_subjects_df
+    subjects = pd.unique(questions_subjects_df[["FIRST_SUBJECT", "SECOND_SUBJECT", "THIRD_SUBJECT"]].values.ravel('K'))
+    subjects = pd.Series(subjects).dropna().sort_values(ignore_index=True)
+
+    # Obtém os temas inválidos
+    invalid_subjects = get_invalid_subjects(questions_subjects_df)
+
+    # Remove os temas inválidos da lista de temas
+    subjects = np.setdiff1d(subjects, invalid_subjects)
+
+    # Apenas universidades públicas federais
+    if public_only:
+        condition = (Enade_2023["CO_GRUPO"] == group_code) & \
+                    (Enade_2023["CO_CATEGAD"] == PUBLIC_ADMIN_CATEGORY) & \
+                    (Enade_2023["CO_ORGACAD"] == FEDERAL_ORG_CATEGORY)
+    else:
+        condition = (Enade_2023["CO_GRUPO"] == group_code)
+
+    # Obtém os códigos das instituições de ensino
+    hei_codes = pd.unique(Enade_2023.loc[condition, "CO_CURSO"])
+
+    scores = []
+    for code in hei_codes:
+        # Filtra o DataFrame Enade_2023 pelos códigos de grupo e IES
+        hei_df = Enade_2023[(Enade_2023["CO_GRUPO"] == group_code) & \
+                            (Enade_2023["CO_CURSO"] == code)] #code
+
+        # Obtém as notas por tema para a instituição de ensino
+        score = get_score_per_subject(questions_subjects_df, hei_df)["Nota (%)"].values.tolist()
+        scores.append([code, score])
+
+    # Obtém os valores das notas por tema
+    score_values = np.array([values[1] for values in scores])
+
+   # Obtém as melhores notas por temas e as respectivas instituições de ensino
+    best_hei_scores = [(scores[row][0], max_score)
+                       for max_score, row in zip(np.max(score_values, axis=0),
+                                                 np.argmax(score_values, axis=0))]
+
+
+    # Separa os códigos e as notas por tema
+    codes, subject_scores = zip(*best_hei_scores)
+
+
+    # Obtém os nomes das instituições de ensino a partir dos códigos
+    get_hei_code = lambda code: Enade_2023[Enade_2023["CO_CURSO"] == code]["CO_IES"].iloc[0]
+    hei_data = [hei_dict.get(get_hei_code(code),
+                             f"Código da IES: {get_hei_code(code)}")
+                             for code in codes]
+
+    # Obtém o número de participantes por instituição de ensino
+    num_participants = [
+        Enade_2023[
+            (Enade_2023["CO_GRUPO"] == group_code) & \
+            (Enade_2023["CO_CURSO"] == code)
+        ].shape[0]
+        for code in codes
+    ]
+
+    # Obtém as notas da UFPA por tema
+    ufpa_df = Enade_2023[Enade_2023["CO_CURSO"] == course_code]
+    ufpa_data = get_score_per_subject(questions_subjects_df, ufpa_df).reset_index()["Nota (%)"]
+
+    # Cria uma lista com os dados para a tabela
+    data = [subjects,
+            hei_data,
+            num_participants,
+            subject_scores,
+            ufpa_data]
+
+
+    # Define as colunas do dataframe
+    df_columns = ["Tema",
+                  "IES com o melhor desempenho",
+                  "Nº de participantes",
+                  "Melhor curso",
+                  "UFPA"]
+
+    # Define os índices do dataframe como uma tupla de múltiplos níveis
+    tuples = [("", "Tema"),
+              ("", "IES com o melhor desempenho"),
+              ("", "Nº de participantes"),
+              ("Desempenho (%)", "Melhor curso"),
+              ("Desempenho (%)", "UFPA")]
+
+    idx = pd.MultiIndex.from_tuples(tuples)
+
+    # Cria o DataFrame df_best_hei_per_subject
+    df_best_hei_per_subject = pd.DataFrame(dict(zip(df_columns, data)))
+    df_best_hei_per_subject.columns = idx
+    
+    # fig, ax = plt.subplots() #figsize=(6, len(df)*0.4 + 1)
+    # ax.axis('off')  # Remove os eixos
+    # tabela = ax.table(
+    #     cellText=df_best_hei_per_subject.values,
+    #     colLabels=df_best_hei_per_subject.columns,
+    #     loc='center',
+    #     cellLoc='center'
+    # )
+    
+    return df_best_hei_per_subject
+    
+    
+
+    # Exibe o DataFrame formatado
+    # pd.set_option('display.max_colwidth', None)
+    # display(df_best_hei_per_subject.style.format(precision=2, decimal=","))
+
+    # if to_latex:
+    #     # Converte o DataFrame para LaTeX
+    #     df_to_latex = df_best_hei_per_subject.style.format(precision=2, decimal=",") \
+    #         .format_index(escape="latex", axis=1) \
+    #         .hide(axis=0) \
+    #         .to_latex(caption="Nome da Tabela",
+    #                   column_format='llccc',
+    #                   hrules=True,
+    #                   multicol_align='c')
+
+    #     df_to_latex = df_to_latex.replace("\multicolumn{2}{c}{Desempenho (\%)} \\",
+    #                                       "\multicolumn{2}{c}{Desempenho (\%)} \\ \n\cmidrule(lr){4-5}")
+
+    #     df_to_latex = df_to_latex.replace("Nº de participantes",
+    #                                       "\makecell[c]{N.º de\\participantes}")
+
+    #     print("\nCódigo em LaTeX:\n")
+    #     display(df_to_latex)
+    return df_best_hei_per_subject
