@@ -1,6 +1,5 @@
 import streamlit as st
-from app import renderiza_filtros, atualiza_cursos, municipios
-from pages.conhecimento_especifico import mun, cur
+from app import atualiza_cursos, municipios
 from main import COURSE_CODES, plot_average_graph, plot_count_graph
 
 st.markdown("""
@@ -22,11 +21,6 @@ max-width: none;
 st.title('QE ENADE 2025')
 
 col1, col2 = st.columns([0.5, 0.5])
-
-# municipios = UFPA_data['NOME_MUNIC_CURSO'].unique().tolist()
-# municipios.sort()
-
-print('printando mun e cur do qe',mun,cur)
 
 municipio_op = st.session_state.get('municipio_op', municipios[0])
 
@@ -57,17 +51,6 @@ st.selectbox(
 )
 
 st.session_state['curso_op'] = st.session_state['curso']
-
-
-# st.selectbox(
-#             "Selecione o Município",
-#             mun
-#         )
-
-# st.selectbox(
-#             "Selecione o curso",
-#             cur
-#         )
 
 col1, col2, col3 = st.columns(3)
 tab1, tab2, tab3 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação"])
@@ -117,8 +100,7 @@ oaf_questions_text = ['Foram oferecidas oportunidades para os estudantes partici
                     'Foram oferecidas oportunidades para os estudantes realizarem intercâmbios e/ou estágios fora do país.']
 
 for code, item in COURSE_CODES.items():
-    if item[1] == cur and item[3] == mun:
-        print(cur,mun)
+    if item[1] == st.session_state['curso_op'] and item[3] == st.session_state['municipio_op']:
         with tab1:
             col1, col2 = st.columns(2)
             with col1:
@@ -147,4 +129,4 @@ for code, item in COURSE_CODES.items():
             with col2:
                 st.plotly_chart(plot_count_graph(code, 
                                             ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']), use_container_width=True)
-        break  # se quiser só um gráfico
+        break
