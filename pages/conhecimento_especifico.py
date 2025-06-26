@@ -1,6 +1,6 @@
 import streamlit as st
 from main import COURSE_CODES, plot_performance_graph, show_best_hei_ranking_table, UFPA_data
-from app import renderiza_filtros, atualiza_cursos
+from app import atualiza_cursos
 
 st.markdown("""
 <style>
@@ -55,22 +55,12 @@ st.selectbox(
     index=cursos.index(st.session_state['curso_op']),
     key='curso'
 )
-st.session_state['curso_op'] = st.session_state['curso']
-
-def get_filtros_values():
-    municipio = st.session_state['municipio']
-    curso = st.session_state['curso']
-    
-    return municipio, curso
-
-mun, cur = get_filtros_values()
-print('printando mun e cur da pagina ce: ',mun,cur)
-          
+st.session_state['curso_op'] = st.session_state['curso']          
         
 tab1, tab2, tab3= st.tabs(["Gráfico Razão do Percentual", "Gráfico Percentual", "Tabela Ranking"])
 
 for code,item in COURSE_CODES.items():
-    if item[1] == cur and item[3] == mun:
+    if item[1] == st.session_state['curso_op'] and item[3] == st.session_state['municipio_op']:
         fig1, fig2 = plot_performance_graph(item[0], code, ratio_graph=True)
         with tab1:
             if fig1:
