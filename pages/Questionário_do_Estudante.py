@@ -4,9 +4,9 @@ from main import COURSE_CODES, plot_average_graph, plot_count_graph
 
 st.markdown("""
 <style>
-#conhecimento-especifico-enade-2025 
-{font-size: 30px;
-padding:1rem 0;}     
+#questionario-do-estudante-enade-2023
+{font-size: 2.4rem;
+padding:1rem 1rem;}     
 
 .stMainBlockContainer
 {padding:3rem 0;
@@ -15,21 +15,39 @@ max-width: none;
 
 .st-emotion-cache-ocqkz7{
     padding: 0 1rem;
-}              
+}    
+
+.st-c2 {
+    background-color: rgb(0 116 219);
+}
+
+.st-bd {
+    color: rgb(0 116 219);
+}
+
+.st-aq {
+    padding-left: 1rem;
+}
+
+.st-bn:hover {
+    color: rgb(0 116 219);
+}
+          
 </style>""", unsafe_allow_html=True)
 
-st.title('QE ENADE 2025')
+st.title('Questionário do Estudante ENADE 2023')
 
 col1, col2 = st.columns([0.5, 0.5])
 
 municipio_op = st.session_state.get('municipio_op', municipios[0])
 
-st.selectbox(
-    "Selecione o Município",
-    municipios,
-    index=municipios.index(municipio_op),
-    key='municipio'
-)
+with col1:
+    st.selectbox(
+        "Selecione o Município",
+        municipios,
+        index=municipios.index(municipio_op),
+        key='municipio'
+    )
 
 # Atualiza a variável persistente se o usuário trocar a seleção
 st.session_state['municipio_op'] = st.session_state['municipio']
@@ -43,14 +61,16 @@ curso_op = st.session_state.get('curso_op', cursos[0])
 if curso_op not in cursos:
     curso_op = cursos[0]
 
-st.selectbox(
-    "Selecione o Curso",
-    cursos,
-    index=cursos.index(curso_op),
-    key='curso'
-)
+with col2:
+    st.selectbox(
+        "Selecione o Curso",
+        cursos,
+        index=cursos.index(curso_op),
+        key='curso'
+    )
 
 st.session_state['curso_op'] = st.session_state['curso']
+
 
 col1, col2, col3 = st.columns(3)
 tab1, tab2, tab3 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação"])
@@ -60,7 +80,7 @@ odp_questions_text = ['As disciplinas cursadas contribuíram para sua formação
                     'As metodologias de ensino utilizadas no curso desafiaram você a aprofundar<br>conhecimentos e desenvolver competências reflexivas e críticas.',
                     'O curso propiciou experiências de aprendizagem inovadoras.',
                     'O curso contribuiu para o desenvolvimento da sua consciência ética<br>para o exercício profissional.',
-                    ' No curso você teve oportunidade de aprender a trabalhar em equipe.',
+                    'No curso você teve oportunidade de aprender a trabalhar em equipe.',
                     'O curso possibilitou aumentar sua capacidade de reflexão e argumentação.',
                     'O curso promoveu o desenvolvimento da sua capacidade de pensar criticamente,<br>analisar e refletir sobre soluções para problemas da sociedade.',
                     'O curso contribuiu para você ampliar sua capacidade de comunicação<br>nas formas oral e escrita.',
@@ -96,8 +116,8 @@ oaf_questions_text = ['Foram oferecidas oportunidades para os estudantes partici
                     'Foram oferecidas oportunidades para os estudantes participarem de<br> projetos de iniciação científica e de atividades que estimularam a investigação acadêmica.',
                     'O curso ofereceu condições para os estudantes participarem de<br> eventos internos e/ou externos à instituição.',
                     'A instituição ofereceu oportunidades para os estudantes<br> atuarem como representantes em órgãos colegiados.',
-                    'Foram oferecidas oportunidades para os estudantes realizarem intercâmbios e/ou estágios no país.',
-                    'Foram oferecidas oportunidades para os estudantes realizarem intercâmbios e/ou estágios fora do país.']
+                    'Foram oferecidas oportunidades para os estudantes<br> realizarem intercâmbios e/ou estágios no país.',
+                    'Foram oferecidas oportunidades para os estudantes<br> realizarem intercâmbios e/ou estágios fora do país.']
 
 for code, item in COURSE_CODES.items():
     if item[1] == st.session_state['curso_op'] and item[3] == st.session_state['municipio_op']:
@@ -129,4 +149,4 @@ for code, item in COURSE_CODES.items():
             with col2:
                 st.plotly_chart(plot_count_graph(code, 
                                             ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']), use_container_width=True)
-        break
+        break  
