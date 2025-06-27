@@ -180,8 +180,6 @@ for curso, file_name in zip(cod_curso,questions_sub_file_name):
                              UFPA_data.loc[UFPA_data['CO_CURSO']==curso, 'NOME_CURSO'].iloc[0],
                              file_name,
                              UFPA_data.loc[UFPA_data['CO_CURSO']==curso, 'NOME_MUNIC_CURSO'].iloc[0]]
-    
-############################
 
 for col in QE_data_2023.columns:
   QE_data_2023[col] = QE_data_2023[col].fillna(0).astype(int)
@@ -232,7 +230,8 @@ def plot_average_graph(course_code: int, questions_list, question_text):
                     yanchor="bottom", # Anchor the legend's bottom to the y coordinate
                     y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
                     xanchor="left",  # Anchor the legend's right to the x coordinate
-                    x=0),
+                    x=0,
+                    font=dict(size=13)),
         yaxis_title=None,
         xaxis_title=None
     )
@@ -293,15 +292,14 @@ def plot_count_graph(course_code: int, questions_list) -> None:
   fig.update_layout(xaxis_type='category',
                     yaxis_title=None,
                     xaxis_title=None,
-                    legend_title_text="teste",
+                    legend_title_text="",
                     legend_valign='middle',
                     legend=dict(
-                        orientation="h",  # Horizontal orientation for better top placement
-                        yanchor="bottom", # Anchor the legend's bottom to the y coordinate
-                        y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
-                        xanchor="right",  # Anchor the legend's right to the x coordinate
-                        x=1               # Position at the right edge of the plot area
-                    ))
+                        orientation="h",  
+                        yanchor="bottom", 
+                        y=1.02,           
+                        xanchor="right",  
+                        x=1))
   
   fig.data[0].name = 'Total de respostas Discordo Totalmente e Discordo'
   fig.data[1].name = 'Total de respostas Discordo Parc. e Corcondo Parc.'
@@ -599,14 +597,5 @@ def show_best_hei_ranking_table(group_code:int, course_code:int, public_only:boo
     # Cria o DataFrame df_best_hei_per_subject
     df_best_hei_per_subject = pd.DataFrame(dict(zip(df_columns, data)))
     df_best_hei_per_subject.columns = idx
-    
-    # fig, ax = plt.subplots() #figsize=(6, len(df)*0.4 + 1)
-    # ax.axis('off')  # Remove os eixos
-    # tabela = ax.table(
-    #     cellText=df_best_hei_per_subject.values,
-    #     colLabels=df_best_hei_per_subject.columns,
-    #     loc='center',
-    #     cellLoc='center'
-    # )
     
     return df_best_hei_per_subject
