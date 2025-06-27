@@ -2,7 +2,7 @@ import streamlit as st
 from main import UFPA_data
 
 st.set_page_config(
-    page_title='Multipage test'
+    page_title='Análise Microdados ENADE 2023'
 )
 
 st.title('ENADE 2025')
