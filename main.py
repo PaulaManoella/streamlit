@@ -10,7 +10,6 @@ from textwrap import fill
 import plotly.express as px
 
 
-
 ENADE_2023_CE_URL = "https://github.com/PaulaManoella/Microdados-Enade/raw/main/databases2023/microdados2023_arq3.zip"
 ENADE_2023_QE_URL = "https://github.com/PaulaManoella/Microdados-Enade/raw/main/databases2023/microdados2023_arq4.zip"
 
@@ -53,8 +52,6 @@ database = pd.read_csv(base, sep=";")
 
 cpc_base_url = "https://raw.githubusercontent.com/PaulaManoella/Microdados-Enade/refs/heads/main/databases2023/CPC_2023.csv"
 cpc2023 = pd.read_csv(cpc_base_url, sep=";")
-
-#####################
 
 
 def get_raw_data(url: str, extract_to: str = '.') -> None:
@@ -202,37 +199,55 @@ def plot_average_graph(course_code: int, questions_list, question_text):
         questions_average.append(round(np.mean(values), 2))
 
     question_labels = [q.replace('QE_I', '') for q in questions_list]
-    colors = ['#00712D' if val == max(questions_average) else '#F09319' if val == min(questions_average) else '#81A263' for val in questions_average]
-
-   # question_text = ['text A', 'text B']
-    df_question_text= pd.DataFrame({'text_qe': question_text})
-    graph = px.bar(df_question_text, x=question_labels, 
-                   y=questions_average, 
-                   color=colors, 
+    
+    #criando df com todas as infos (media, nome questao e texto questao)
+    df = pd.DataFrame({
+        'num_questao': question_labels,
+        'media_questao': questions_average,
+        'texto_questao': question_text
+    })
+    
+    df['cor'] = df['media_questao'].apply(lambda val: '#00712D' if val == df['media_questao'].max() else '#F09319' if val == df['media_questao'].min() else  '#81A263')
+        
+    graph = px.bar(df, x='num_questao', 
+                   y='media_questao', 
+                   color='cor', 
                    color_discrete_map="identity", 
-                   text=questions_average,
-                   hover_data=['text_qe'])
+                   text='media_questao',
+                   custom_data=['texto_questao'])
+                   #hover_data=['text_qe'])
     
     graph.update_layout(
-    xaxis_type='category',
-    xaxis=dict(
-        categoryorder='array',
-        categoryarray=question_labels
-    ),
-    hoverlabel=dict(
-        bgcolor="white",
-        font_size=16,
-        namelength = -1,
-        align='left'
-    ))
+        xaxis_type='category',
+        xaxis=dict(
+            categoryorder='array',
+            categoryarray=question_labels
+        ),
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=16,
+            namelength = -1,
+            align='left'),
+        legend=dict(orientation="h",  # Horizontal orientation for better top placement
+                    yanchor="bottom", # Anchor the legend's bottom to the y coordinate
+                    y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
+                    xanchor="left",  # Anchor the legend's right to the x coordinate
+                    x=0),
+        yaxis_title=None,
+        xaxis_title=None
+    )
 
     graph.update_traces(textposition='outside',
-                        hovertemplate="<b>Questão: </b> %{customdata[0]}",
-                        customdata=df_question_text[["text_qe"]].values)
-
+                        hovertemplate="<b>Questão %{x}: </b> %{customdata[0]}",
+                        showlegend=True)
+    
+    graph.data[1].name = 'Maior média'
+    graph.data[2].name = 'Menor média'
+    graph.data[0].showlegend=False
+    
     return graph
 
-def plot_count_graph(course_code: int, questions_list) -> None: #, question_code: str , dimension:str
+def plot_count_graph(course_code: int, questions_list) -> None: 
   course_ufpa_df = QE_data_2023[(QE_data_2023["CO_CURSO"] == course_code) &
                             (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
                             (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)]
@@ -272,18 +287,27 @@ def plot_count_graph(course_code: int, questions_list) -> None: #, question_code
 
   #removing QE_I for bar labels
   questions = [question.replace('QE_I', '') for question in questions]
-
-  plt.plot(questions, um_e_dois, marker='.')
-  plt.plot(questions, tres_e_quatro, marker='.')
-  plt.plot(questions, cinco_e_seis, marker='.')
-  plt.plot(questions, sete_e_oito, marker='.')
-  plt.xticks(fontsize=7)
-
-  fig = px.line(x=questions, y=[um_e_dois, tres_e_quatro, cinco_e_seis, sete_e_oito])
+  
+  fig = px.line(x=questions, y=[um_e_dois, tres_e_quatro, cinco_e_seis, sete_e_oito]) 
 
   fig.update_layout(xaxis_type='category',
-                    showlegend=False)
-
+                    yaxis_title=None,
+                    xaxis_title=None,
+                    legend_title_text="teste",
+                    legend_valign='middle',
+                    legend=dict(
+                        orientation="h",  # Horizontal orientation for better top placement
+                        yanchor="bottom", # Anchor the legend's bottom to the y coordinate
+                        y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
+                        xanchor="right",  # Anchor the legend's right to the x coordinate
+                        x=1               # Position at the right edge of the plot area
+                    ))
+  
+  fig.data[0].name = 'Total de respostas Discordo Totalmente e Discordo'
+  fig.data[1].name = 'Total de respostas Discordo Parc. e Corcondo Parc.'
+  fig.data[2].name = 'Total de respostas Concordo e Concordo Totalm.'
+  fig.data[3].name = 'Total de respostas Não sei responder e Não se aplica'
+  
   return fig
 
 def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, absolute_graph=True) -> None:
@@ -306,11 +330,6 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
     # Função lambda para calcular razão de acerto (axis=0: Aplicar o cálculo "por coluna"; axis=1: Aplicar o cálculo "em linha")
     ratio = lambda col: (col["Nota UFPA (%)"] / col["Nota Enade (%)"]).round(2)
     merged_score_df["Razão"] = merged_score_df.apply(ratio, axis=1)
-
-    # # Configurações de formatação do gráfico
-    # plt.rcParams.update({"text.usetex": True})
-    # plt.rcParams["font.family"] = "Times New Roman"
-    # plt.rcParams["font.size"] = 12
     
     if ratio_graph:
         title = (
@@ -318,7 +337,7 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
             f"- {COURSE_CODES[course_code][3]} por tema no Enade 2023"
         )
 
-        fig1, ax = plt.subplots(figsize=(8, 8))
+        fig1, ax = plt.subplots(figsize=(6, 6))
 
         ax.spines[['top', 'right']].set_visible(False)
         ax.axvline(x=1.0, color="red")
@@ -590,30 +609,4 @@ def show_best_hei_ranking_table(group_code:int, course_code:int, public_only:boo
     #     cellLoc='center'
     # )
     
-    return df_best_hei_per_subject
-    
-    
-
-    # Exibe o DataFrame formatado
-    # pd.set_option('display.max_colwidth', None)
-    # display(df_best_hei_per_subject.style.format(precision=2, decimal=","))
-
-    # if to_latex:
-    #     # Converte o DataFrame para LaTeX
-    #     df_to_latex = df_best_hei_per_subject.style.format(precision=2, decimal=",") \
-    #         .format_index(escape="latex", axis=1) \
-    #         .hide(axis=0) \
-    #         .to_latex(caption="Nome da Tabela",
-    #                   column_format='llccc',
-    #                   hrules=True,
-    #                   multicol_align='c')
-
-    #     df_to_latex = df_to_latex.replace("\multicolumn{2}{c}{Desempenho (\%)} \\",
-    #                                       "\multicolumn{2}{c}{Desempenho (\%)} \\ \n\cmidrule(lr){4-5}")
-
-    #     df_to_latex = df_to_latex.replace("Nº de participantes",
-    #                                       "\makecell[c]{N.º de\\participantes}")
-
-    #     print("\nCódigo em LaTeX:\n")
-    #     display(df_to_latex)
     return df_best_hei_per_subject
