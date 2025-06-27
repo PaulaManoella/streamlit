@@ -13,7 +13,7 @@ padding:1rem 1rem;}
 max-width: none;
 }  
 
-.st-emotion-cache-ocqkz7{
+.stHorizontalBlock{
     padding: 0 1rem;
 } 
 
@@ -30,7 +30,28 @@ div[data-testid="stImageContainer"] img {
     width: auto !important;
     max-width: 75% !important;
     height: auto !important;
-}          
+}    
+
+.st-c2 {
+    background-color: rgb(0 116 219);
+}
+
+.st-bd {
+    color: rgb(0 116 219);
+}
+
+.st-aq {
+    padding-left: 1rem;
+}
+
+.st-cb {
+    padding: 1rem 1rem;
+}
+
+.st-bn:hover {
+    color: rgb(0 116 219);
+}
+      
 </style>
 
 """, unsafe_allow_html=True)
@@ -71,7 +92,7 @@ with col2:
         index=cursos.index(st.session_state['curso_op']),
         key='curso'
     )
-st.session_state['curso_op'] = st.session_state['curso']          
+st.session_state['curso_op'] = st.session_state['curso']         
         
 tab1, tab2, tab3= st.tabs(["Gráfico Razão do Percentual", "Gráfico Percentual", "Tabela Ranking"])
 
