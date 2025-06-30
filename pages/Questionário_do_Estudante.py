@@ -13,9 +13,13 @@ padding:1rem 1rem;}
 max-width: none;
 }  
 
-.st-emotion-cache-ocqkz7{
+.stHorizontalBlock{
     padding: 0 1rem;
-}    
+} 
+
+.stVerticalBlock {
+    padding: 0 0.5rem;
+}
 
 .st-c2 {
     background-color: rgb(0 116 219);
@@ -27,6 +31,10 @@ max-width: none;
 
 .st-aq {
     padding-left: 1rem;
+}
+
+.st-bz:focus {
+    color: rgb(0 116 219);
 }
 
 .st-bn:hover {
