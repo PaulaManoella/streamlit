@@ -5,7 +5,7 @@ st.set_page_config(
     page_title='Análise Microdados ENADE 2023'
 )
 
-st.title('ENADE 2025')
+st.title('ENADE 2023')
 with st.sidebar:
     st.text('test')
     
