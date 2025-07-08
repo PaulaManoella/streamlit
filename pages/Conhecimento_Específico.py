@@ -4,7 +4,7 @@ from app import atualiza_cursos
 
 st.markdown("""
 <style>
-#conhecimento-especifico-enade-2023 
+conhecimento-especifico-enade-2023 
 {font-size: 2.4rem;
 padding:1rem 1rem;}     
 
@@ -14,7 +14,7 @@ max-width: none;
 }  
 
 .stHorizontalBlock{
-    padding: 0 1rem;
+    padding: 0 10rem;
 } 
 
 .st-ar{
@@ -51,12 +51,25 @@ div[data-testid="stImageContainer"] img {
 .st-bn:hover {
     color: rgb(0 116 219);
 }
+
+.meu-container{
+    margin: 0 10rem;
+}
       
 </style>
 
-""", unsafe_allow_html=True)
+""",
+unsafe_allow_html=True)
 
-st.title('Conhecimento Específico ENADE 2023')
+st.markdown("""
+<div class="meu-container">
+    <h1>Conhecimento Específico ENADE 2023</h1>
+    <p>A análise gráfica fornece informações valiosas a respeito do desempenho dos alunos nas temáticas avaliadas na prova, uma vez que possibilita averiguar se as estratégias pedagógicas aplicadas nas disciplinas ministradas estão produzindo os resultados almejados. São apresentados dois gráficos que exibem a comparação entre o desempenho do curso de graduação da UFPA e o desempenho nacional, calculado a partir do mesmo curso ofertado por todas as IES no país que participam do exame.</p>
+    <p>O Gráfico da Razão do Percentual de Acerto exibe o desempenho do curso da UFPA em comparação com a média nacional, por tema avaliado no ENADE 2023. A interpretação do gráfico da razão é a seguinte: Razão > 1,0: a UFPA apresentou desempenho superior à média nacional; Razão < 1,0: a UFPA obteve desempenho inferior à média nacional; Razão = 1,0: o desempenho da UFPA foi equivalente à média nacional.</p>
+    <p>O Gráfico de Percentual de Acerto por Tema apresenta a comparação entre o percentual de acertos do curso da UFPA e o percentual médio nacional, para cada temática do componente específico da prova.</p>
+    <p>Na Tabela Ranking é apresentada a instituição com melhor percentual de desempenho, por temática do exame, em comparação com o desempenho do curso da UFPA.</p>
+</div>
+""", unsafe_allow_html=True)
 
 municipios = UFPA_data['NOME_MUNIC_CURSO'].unique().tolist()
 municipios.sort()
