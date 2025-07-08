@@ -1,12 +1,12 @@
 import streamlit as st
 from app import atualiza_cursos, municipios
 from main import COURSE_CODES, plot_average_graph, plot_count_graph
+from streamlit_pdf_viewer import pdf_viewer
 
 st.markdown("""
 <style>
 #questionario-do-estudante-enade-2023
-{font-size: 2.4rem;
-padding:1rem 1rem;}     
+{font-size: 2.5rem;}     
 
 .stMainBlockContainer
 {padding:3rem 0;
@@ -14,7 +14,7 @@ max-width: none;
 }  
 
 .stHorizontalBlock{
-    padding: 0 1rem;
+    padding: 0 10rem;
 } 
 
 .stVerticalBlock {
@@ -40,10 +40,21 @@ max-width: none;
 .st-bn:hover {
     color: rgb(0 116 219);
 }
+
+.meu-container{
+    margin: 0 10rem;
+}
           
 </style>""", unsafe_allow_html=True)
 
-st.title('Questionário do Estudante ENADE 2023')
+st.markdown("""
+<div class="meu-container">
+    <h1>Questionário do Estudante ENADE 2023</h1>
+    <p>Para cada questão no Questionário do Estudante, são disponibilizadas 6 alternativas de resposta que indicam o grau de concordância com cada assertiva, em uma escala que varia de 1 (discordância total) a 6 (concordância total), além das alternativas 7 (Não sei responder) e 8 (Não se aplica).</p>
+    <p>Para cada dimensão do questionário, foram gerados dois gráficos. O gráfico de barras apresenta a média atribuída pelos alunos para cada questão, excluídas as alternativas 7 e 8. São destacadas as questões com a maior e a menor média.</p>
+    <p>O gráfico de linhas representa, por questão, o total de respostas absolutas (contagem) agrupadas pelo tipo de alternativa escolhida, da seguinte forma: 1-2; 3-4; 5-6; 7-8.</p>
+</div>
+""", unsafe_allow_html=True)
 
 col1, col2 = st.columns([0.5, 0.5])
 
@@ -81,7 +92,7 @@ st.session_state['curso_op'] = st.session_state['curso']
 
 
 col1, col2, col3 = st.columns(3)
-tab1, tab2, tab3 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação"])
+tab1, tab2, tab3, tab4 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação", "Anexo Questionário do Estudante"])
 
 odp_questions_text = ['As disciplinas cursadas contribuíram para sua formação integral, <br>como cidadão e profissional.',
                     'Os conteúdos abordados nas disciplinas do curso favoreceram sua atuação<br>em estágios ou em atividades de iniciação profissional.',
@@ -158,3 +169,13 @@ for code, item in COURSE_CODES.items():
                 st.plotly_chart(plot_count_graph(code, 
                                             ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']), use_container_width=True)
         break  
+
+with tab4:
+    pdf_viewer(
+    "anexo_qe_2023.pdf",
+    width=900,
+    height=600,
+    zoom_level=1.5,                    # 120% zoom
+    viewer_align="center",             # Center alignment
+    show_page_separator=True           # Show separators between pages
+)
