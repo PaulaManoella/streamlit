@@ -14,7 +14,7 @@ max-width: none;
 }  
 
 .stHorizontalBlock{
-    padding: 0 10rem;
+    padding: 0 4rem;
 } 
 
 .st-ar{
@@ -52,8 +52,22 @@ div[data-testid="stImageContainer"] img {
     color: rgb(0 116 219);
 }
 
-.meu-container{
-    margin: 0 10rem;
+.text-container{
+    margin: 0 4rem;
+}
+
+.text-container p{
+    text-align: justify;
+    font-size: 17px
+}
+
+.st-ae {
+    padding: 0 3.2rem;
+    transform: none;
+}
+
+.st-ae .stHorizontalBlock {
+    padding: 0 0;
 }
       
 </style>
@@ -62,7 +76,7 @@ div[data-testid="stImageContainer"] img {
 unsafe_allow_html=True)
 
 st.markdown("""
-<div class="meu-container">
+<div class="text-container">
     <h1>Conhecimento Específico ENADE 2023</h1>
     <p>A análise gráfica fornece informações valiosas a respeito do desempenho dos alunos nas temáticas avaliadas na prova, uma vez que possibilita averiguar se as estratégias pedagógicas aplicadas nas disciplinas ministradas estão produzindo os resultados almejados. São apresentados dois gráficos que exibem a comparação entre o desempenho do curso de graduação da UFPA e o desempenho nacional, calculado a partir do mesmo curso ofertado por todas as IES no país que participam do exame.</p>
     <p>O Gráfico da Razão do Percentual de Acerto exibe o desempenho do curso da UFPA em comparação com a média nacional, por tema avaliado no ENADE 2023. A interpretação do gráfico da razão é a seguinte: Razão > 1,0: a UFPA apresentou desempenho superior à média nacional; Razão < 1,0: a UFPA obteve desempenho inferior à média nacional; Razão = 1,0: o desempenho da UFPA foi equivalente à média nacional.</p>
