@@ -5,11 +5,22 @@ st.set_page_config(
     page_title='Análise Microdados ENADE 2023'
 )
 
+st.markdown("""
+<style>
+.text p{
+    font-size: 18px
+}
+</style>""", unsafe_allow_html=True)
+
 st.image('enade.PNG')
 
-st.text('A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações de curso na identificação de melhorias a serem implementadas na graduação.')
-st.text('As análises compreendem os temas do Componente Específico da prova do Enade e as questões do Questionário do Estudante, relativas às dimensões “Organização Didático-pedagógica”, “Infraestrutura e Instalações Físicas” e “Oportunidade Ampliação da Formação Profissional”.')
-st.text('Para visualizar as análises, basta navegar entre as páginas disponíveis no menu lateral.')
+st.markdown("""
+<div class="text">
+    <p>A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações de curso na identificação de melhorias a serem implementadas na graduação.</p>
+    <p>As análises compreendem os temas do Componente Específico da prova do Enade e as questões do Questionário do Estudante, relativas às dimensões “Organização Didático-pedagógica”, “Infraestrutura e Instalações Físicas” e “Oportunidade Ampliação da Formação Profissional”.</p>
+    <p>Para visualizar as análises, basta navegar entre as páginas disponíveis no menu lateral.</p>
+</div>
+""", unsafe_allow_html=True)
     
 municipios = UFPA_data['NOME_MUNIC_CURSO'].unique().tolist()
 municipios.sort()
