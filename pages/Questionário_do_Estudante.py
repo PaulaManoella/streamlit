@@ -21,6 +21,10 @@ max-width: none;
     padding: 0 0.5rem;
 }
 
+.stVerticalBlock .stHorizontalBlock{
+    padding: 0 3.5rem;
+}
+
 .st-c2 {
     background-color: rgb(0 116 219);
 }
@@ -41,14 +45,28 @@ max-width: none;
     color: rgb(0 116 219);
 }
 
-.meu-container{
-    margin: 0 10rem;
+.text-container{
+    margin: 0 4rem;
+}
+
+.text-container p{
+    text-align: justify;
+    font-size: 17px
+}
+
+.st-ae {
+    padding: 0 3.2rem;
+    transform: none;
+}
+
+.st-ae .stHorizontalBlock {
+    padding: 0 0;
 }
           
 </style>""", unsafe_allow_html=True)
 
 st.markdown("""
-<div class="meu-container">
+<div class="text-container">
     <h1>Questionário do Estudante ENADE 2023</h1>
     <p>Para cada questão no Questionário do Estudante, são disponibilizadas 6 alternativas de resposta que indicam o grau de concordância com cada assertiva, em uma escala que varia de 1 (discordância total) a 6 (concordância total), além das alternativas 7 (Não sei responder) e 8 (Não se aplica).</p>
     <p>Para cada dimensão do questionário, foram gerados dois gráficos. O gráfico de barras apresenta a média atribuída pelos alunos para cada questão, excluídas as alternativas 7 e 8. São destacadas as questões com a maior e a menor média.</p>
@@ -92,7 +110,7 @@ st.session_state['curso_op'] = st.session_state['curso']
 
 
 col1, col2, col3 = st.columns(3)
-tab1, tab2, tab3, tab4 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação", "Anexo Questionário do Estudante"])
+tab1, tab2, tab3, tab4 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação", "Questionário do Estudante"])
 
 odp_questions_text = ['As disciplinas cursadas contribuíram para sua formação integral, <br>como cidadão e profissional.',
                     'Os conteúdos abordados nas disciplinas do curso favoreceram sua atuação<br>em estágios ou em atividades de iniciação profissional.',
