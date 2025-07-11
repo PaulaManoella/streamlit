@@ -1,0 +1,63 @@
+.stMain{
+    background-color: #f8fafc;
+}
+
+.text-container h1{
+    font-size: 2.5rem
+}
+
+.text-container p{
+    font-size: 18px;
+}
+
+.stMainBlockContainer{
+    padding:3rem 0;
+    max-width: 100%;
+    width: 1080px;
+}  
+
+.st-emotion-cache-bfgnao p {
+    font-size: 16.5px;
+}
+
+.st-d1 {
+    background-color: white;
+    border: solid 1px rgb(231 231 231);
+}
+
+.st-ae {
+    background-color: white;
+    padding: 1.2rem 1.2rem;
+    border: solid 1px rgb(231 231 231);
+    border-radius: 15px;
+}
+
+.st-d7 {
+    font-size: 18px;
+}
+
+.st-c2 {
+    background-color: rgb(0 116 219);
+}
+
+.st-bd {
+    color: rgb(0 116 219);
+}
+
+.st-bn:hover {
+    color: rgb(0 116 219);
+}
+
+.text-container p{
+    text-align: justify;
+}
+
+.st-stTabs p{
+    font-size: 16px;
+}
+
+@media screen and (min-width: 1900px) {
+    .stMainBlockContainer{
+    width: 1300px;
+}  
+}
