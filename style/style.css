@@ -1,20 +1,250 @@
-.stMain{
+/* STYLE CSS TEST */
+/* Importar fonte Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Variáveis CSS */
+:root {
+    --primary-blue: #2E5C8A;
+    --secondary-gray: #6B7280;
+    --light-blue: #E0F2FE;
+    --white: #ffffff;
+    --light-gray: #F3F4F6;
+    --border-color: #E5E7EB;
+}
+
+/* Reset do Streamlit */
+.main .block-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    max-width: 1200px;
+}
+
+/* Fonte principal */
+html,
+body,
+[class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
+
+/* Header principal linear-gradient(135deg, #E0F2FE 0%, #ffffff 100%)*/
+.hero-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    border: solid 1px #f1f1f1;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.logo-container {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Cards de introdução */
+.intro-card {
+    background: linear-gradient(135deg, #E0F2FE 0%, #ffffff 100%);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E5E7EB;
+    margin-bottom: 2rem;
+}
+
+.intro-card h2 {
+    color: #2E5C8A;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 33px;
+}
+
+.intro-content p {
+    font-size: 1.17rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    color: #4e4c4c;
+    text-align: justify;
+}
+
+/* Cards de navegação */
+.nav-card {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E5E7EB;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    height: 100%;
+}
+
+.nav-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #E0F2FE;
+    border-radius: 50%;
+}
+
+.nav-card h3 {
+    color: #2E5C8A;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.nav-card p {
+    color: #6B7280;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Botões customizados */
+.stButton>button {
+    background: #2E5C8A;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.stButton>button:hover {
+    background: #1e3a5f;
+    transform: translateY(-1px);
+}
+
+/* Sidebar customizada */
+.css-1d391kg {
+    background: white;
+    border-right: 1px solid #E5E7EB;
+}
+
+.css-1d391kg .css-1v0mbdj {
+    color: #2E5C8A;
+    font-weight: 600;
+}
+
+/* Métricas customizadas */
+.metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #E5E7EB;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2E5C8A;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    font-size: 1rem;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+/* Footer */
+.footer {
+    background: #2E5C8A;
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-top: 3rem;
+}
+
+.footer p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.nav-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.st-emotion-cache-zy6yx3 {
+    max-width: 1080px;
+    padding: 4rem 1rem 10rem;
+}
+
+.stMain {
+    background: #f9f9f9;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .intro-card h2 {
+        font-size: 1.5rem;
+    }
+
+    .intro-content p {
+        font-size: 1rem;
+    }
+
+    .nav-card h3 {
+        font-size: 1.1rem;
+    }
+}
+
+.menu-title .icon {
+    /* content: ""; */
+    display: none;
+}
+
+.stMain {
     background-color: #f8fafc;
 }
 
-.text-container h1{
+.text-container h1 {
     font-size: 2.5rem
 }
 
-.text-container p{
+.text-container p {
     font-size: 18px;
 }
 
-.stMainBlockContainer{
-    padding:3rem 0;
+.stMainBlockContainer {
+    padding: 3rem 0;
     max-width: 100%;
     width: 1080px;
-}  
+}
 
 .st-emotion-cache-bfgnao p {
     font-size: 16.5px;
@@ -48,16 +278,34 @@
     color: rgb(0 116 219);
 }
 
-.text-container p{
+.text-container p {
     text-align: justify;
 }
 
-.st-stTabs p{
+.st-stTabs p {
     font-size: 16px;
 }
 
+.stTabs {
+    background: white;
+}
+
+.menu .container-xxl[data-v-5af006b8] {
+    background-color: transparent;
+}
+
+.st-emotion-cache-zy6yx3 {
+    padding: 4rem 1rem 10rem;
+    max-width: initial;
+}
+
+.hero-section {
+    background: white;
+    border: solid 1px #f1f1f1;
+}
+
 @media screen and (min-width: 1900px) {
-    .stMainBlockContainer{
-    width: 1300px;
-}  
+    .stMainBlockContainer {
+        width: 1300px;
+    }
 }

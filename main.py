@@ -65,7 +65,6 @@ def get_raw_data(url: str, extract_to: str = '.') -> None:
 
     # Fazle.extractall(path=extract_to)
 
-
 def filter_courses_results(df: pd.DataFrame) -> pd.DataFrame:
     """
     Filtra somente os participantes presentes na prova, que tiveram resultado
@@ -93,7 +92,6 @@ def filter_courses_results(df: pd.DataFrame) -> pd.DataFrame:
                 (~df["DS_VT_ESC_OCE"].isna())]
 
     return df
-
 
 def reduce_data(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -134,7 +132,6 @@ def reduce_data(df: pd.DataFrame) -> pd.DataFrame:
                "TP_PR_GER"]
 
     return df[columns]
-
 
 get_raw_data(url=ENADE_2023_CE_URL, extract_to='.')
 raw_data = pd.read_csv("microdados2023_arq3.txt", sep=";", decimal=",", dtype=DTYPES, low_memory=False)
@@ -231,14 +228,16 @@ def plot_average_graph(course_code: int, questions_list, question_text):
                     y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
                     xanchor="left",  # Anchor the legend's right to the x coordinate
                     x=0,
-                    font=dict(size=13)),
+                    font=dict(size=14)),
+        # font=dict(size=18),
         yaxis_title=None,
         xaxis_title=None
     )
 
     graph.update_traces(textposition='outside',
-                        hovertemplate="<b>Questão %{x}: </b> %{customdata[0]}",
-                        showlegend=True)
+                        hovertemplate="<b>Questão %{x}:</b> %{customdata[0]}",
+                        showlegend=True,
+                        textfont_size=13.5)
     
     graph.data[1].name = 'Maior média'
     graph.data[2].name = 'Menor média'
@@ -299,12 +298,19 @@ def plot_count_graph(course_code: int, questions_list) -> None:
                         yanchor="bottom", 
                         y=1.02,           
                         xanchor="right",  
-                        x=1))
+                        x=1),
+                    hoverlabel=dict(
+                        font_size=16)
+                    )
+  
+  fig.update_traces(hovertemplate='Contagem de respostas: <b>%{y}</b><extra></extra>')
   
   fig.data[0].name = 'Total de respostas Discordo Totalmente e Discordo'
   fig.data[1].name = 'Total de respostas Discordo Parc. e Corcondo Parc.'
   fig.data[2].name = 'Total de respostas Concordo e Concordo Totalm.'
   fig.data[3].name = 'Total de respostas Não sei responder e Não se aplica'
+  
+  
   
   return fig
 
