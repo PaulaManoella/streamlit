@@ -2,6 +2,8 @@ import streamlit as st
 import base64
 from streamlit_option_menu import option_menu
 from paginas import conhecimento_especifico, questionario_do_estudante
+from pathlib import Path
+import base64
 
 st.set_page_config(
     page_title="Enade 2023 - Análises Descritivas",
@@ -17,38 +19,17 @@ st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
 
 # Configuração da página
 # Função para carregar e codificar imagem em base64
-def get_base64_image(image_path):
-    try:
-        with open(image_path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
-    except:
-        return None
+def get_base64_image(relative_path):
+    base_path = Path(__file__).parent
+    image_path = base_path / relative_path
 
-# Função para criar cards de navegação
-def create_nav_card(title, description, icon_path=None, icon_emoji="📊"):
-    icon_html = ""
-    if icon_path:
-        try:
-            icon_base64 = get_base64_image(icon_path)
-            if icon_base64:
-                icon_html = f'<img src="data:image/png;base64,{icon_base64}" style="width: 30px; height: 30px;">'
-            else:
-                icon_html = f'<span style="font-size: 30px;">{icon_emoji}</span>'
-        except:
-            icon_html = f'<span style="font-size: 30px;">{icon_emoji}</span>'
-    else:
-        icon_html = f'<span style="font-size: 30px;">{icon_emoji}</span>'
-    
-    return f"""
-    <div class="nav-card">
-        <div class="card-icon">
-            {icon_html}
-        </div>
-        <h3>{title}</h3>
-        <p>{description}</p>
-    </div>
-    """
-    
+    if not image_path.exists():
+        st.error(f"❌ Imagem não encontrada: {image_path}")
+        return ""
+
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+ 
 with st.sidebar:
     # st.markdown("""
     # <button type="button" onclick="alert('Hello world!')">Click Me!</button>
@@ -103,7 +84,7 @@ if page == "🏠 Página Inicial":
         </div>
         <img src="data:image/png;base64,{enade_base64}" style="max-height:150px;">
     </div>
-    """.format(logo_cpa_base64=get_base64_image("src/img/CPA_logo.jpg"), logo_proplan_base64=get_base64_image("src/img/PROPLAN_logo.jpg"), enade_base64=get_base64_image("src/img/enade_removed.png"), logo_diavi_base64=get_base64_image("src/img/DIAVI_logo.png"), diavi_logo_base64=get_base64_image("src/img/DIAVI_logo.png")), unsafe_allow_html=True)
+    """.format(logo_cpa_base64=get_base64_image("src/img/CPA_logo.jpg"), logo_proplan_base64=get_base64_image("src/img/PROPLAN_logo.jpg"), enade_base64=get_base64_image("src/img/enade_removed.png"), diavi_logo_base64=get_base64_image("src/img/DIAVI_logo.png")), unsafe_allow_html=True)
     
     # Seção de introdução
     st.markdown("""
