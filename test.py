@@ -103,7 +103,7 @@ if page == "🏠 Página Inicial":
         </div>
         <img src="data:image/png;base64,{enade_base64}" style="max-height:150px;">
     </div>
-    """.format(logo_cpa_base64=get_base64_image("src/img/CPA_logo.jpg"), logo_proplan_base64=get_base64_image("src/img/PROPLAN_logo.jpg"), enade_base64=get_base64_image("src/img/enade_removed.PNG"), logo_diavi_base64=get_base64_image("src/img/DIAVI_logo.png"), diavi_logo_base64=get_base64_image("src/img/logo_diavi.png")), unsafe_allow_html=True)
+    """.format(logo_cpa_base64=get_base64_image("src/img/CPA_logo.jpg"), logo_proplan_base64=get_base64_image("src/img/PROPLAN_logo.jpg"), enade_base64=get_base64_image("src/img/enade_removed.png"), logo_diavi_base64=get_base64_image("src/img/DIAVI_logo.png"), diavi_logo_base64=get_base64_image("src/img/DIAVI_logo.png")), unsafe_allow_html=True)
     
     # Seção de introdução
     st.markdown("""

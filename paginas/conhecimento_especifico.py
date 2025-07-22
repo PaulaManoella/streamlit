@@ -1,6 +1,5 @@
 import streamlit as st
 from main import COURSE_CODES, plot_performance_graph, show_best_hei_ranking_table, UFPA_data
-# from st_app import atualiza_cursos
 from utils import atualiza_cursos
 
 

@@ -135,16 +135,6 @@ def show_page():
                         st.plotly_chart(plot_count_graph(code, 
                                                     ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']), use_container_width=True)
                     
-                    # pdf_buffer = gerar_pdf_streamlit(plot_average_graph(code, 
-                    #                                 ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53'],
-                    #                                 oaf_questions_text))
-
-                    # st.download_button(
-                    #     label="📄 Baixar relatório em PDF",
-                    #     data=pdf_buffer,
-                    #     file_name="relatorio_enade.pdf",
-                    #     mime="application/pdf"
-                    # )
 
                 break  
 
@@ -157,7 +147,3 @@ def show_page():
             viewer_align="center",             # Center alignment
             show_page_separator=True           # Show separators between pages
         )
-            
-    if st.session_state["municipio"] != "Selecione o município" and st.session_state["curso"] != "Selecione o Curso":
-            if st.button("Gerar Relatório"):
-                st.success(f"Relatório gerado para {st.session_state['curso']} em {st.session_state['municipio']}")
