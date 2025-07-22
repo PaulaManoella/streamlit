@@ -31,11 +31,10 @@ def get_base64_image(relative_path):
         return base64.b64encode(img_file.read()).decode()
  
 with st.sidebar:
-    # st.markdown("""
-    # <button type="button" onclick="alert('Hello world!')">Click Me!</button>
-    # """, unsafe_allow_html=True)
+    st.markdown("### Menu")  
+    
     page = option_menu(
-    menu_title='Menu',
+    menu_title=None,
     options=[
         "🏠 Página Inicial",
         "📊 Conhecimento Específico",
@@ -69,8 +68,6 @@ with st.sidebar:
             "display": "none",
         }
     },)
-    st.write('Para baixar o relatório completo, primeiro selecione o Município e o Curso')
-    st.button("Baixar relatório", type="primary")
 
 # Conteúdo principal
 if page == "🏠 Página Inicial":    
@@ -93,7 +90,7 @@ if page == "🏠 Página Inicial":
         <div class="intro-content">
             <p>A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações de curso na identificação de melhorias a serem implementadas na graduação.</p>
             <p>As análises compreendem os temas do <b>Componente Específico</b> da prova do Enade e as questões do <b>Questionário do Estudante</b>, relativas às dimensões <b>Organização Didático-pedagógica</b>, <b>Infraestrutura e Instalações Físicas</b> e <b>Oportunidade Ampliação da Formação Profissional</b>.</p>
-            <p>Para visualizar as análises, utilize o menu lateral para navegar entre as páginas <b>Conhecimento Específico</b> e <b>Questionário do Estudante</b>. Em cada uma dessas páginas, você poderá <b>baixar o relatório completo</b> correspondente à <b>ambas análises</b>. Antes de realizar o download, <b>certifique-se de selecionar o Município e o Curso</b> desejado.</p>
+            <p>Para visualizar as análises, utilize o menu lateral para navegar entre as páginas <b>Conhecimento Específico</b> e <b>Questionário do Estudante</b>. </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
