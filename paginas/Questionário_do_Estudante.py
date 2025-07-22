@@ -1,14 +1,15 @@
 import streamlit as st
-from st_app import municipios
 from utils import atualiza_cursos
-from main import COURSE_CODES, plot_average_graph, plot_count_graph
+from main import COURSE_CODES, plot_average_graph, plot_count_graph, UFPA_data
 from streamlit_pdf_viewer import pdf_viewer
-# from func_test import gerar_pdf_streamlit
 
 with open('style/style.css') as f:
     css = f.read()
 
 st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+
+municipios = UFPA_data['NOME_MUNIC_CURSO'].unique().tolist()
+municipios.sort()
 
 def show_page():
 
