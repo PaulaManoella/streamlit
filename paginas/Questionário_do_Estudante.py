@@ -3,7 +3,7 @@ from st_app import municipios
 from utils import atualiza_cursos
 from main import COURSE_CODES, plot_average_graph, plot_count_graph
 from streamlit_pdf_viewer import pdf_viewer
-from func_test import gerar_pdf_streamlit
+# from func_test import gerar_pdf_streamlit
 
 with open('style/style.css') as f:
     css = f.read()
@@ -134,16 +134,16 @@ def show_page():
                         st.plotly_chart(plot_count_graph(code, 
                                                     ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']), use_container_width=True)
                     
-                    pdf_buffer = gerar_pdf_streamlit(plot_average_graph(code, 
-                                                    ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53'],
-                                                    oaf_questions_text))
+                    # pdf_buffer = gerar_pdf_streamlit(plot_average_graph(code, 
+                    #                                 ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53'],
+                    #                                 oaf_questions_text))
 
-                    st.download_button(
-                        label="📄 Baixar relatório em PDF",
-                        data=pdf_buffer,
-                        file_name="relatorio_enade.pdf",
-                        mime="application/pdf"
-                    )
+                    # st.download_button(
+                    #     label="📄 Baixar relatório em PDF",
+                    #     data=pdf_buffer,
+                    #     file_name="relatorio_enade.pdf",
+                    #     mime="application/pdf"
+                    # )
 
                 break  
 
