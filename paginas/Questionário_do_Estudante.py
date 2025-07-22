@@ -1,5 +1,5 @@
 import streamlit as st
-from st_app import municipios
+from Conhecimento_Específico import municipios
 from utils import atualiza_cursos
 from main import COURSE_CODES, plot_average_graph, plot_count_graph
 from streamlit_pdf_viewer import pdf_viewer
