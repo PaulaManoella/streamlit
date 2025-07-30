@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 from streamlit_option_menu import option_menu
-from paginas import conhecimento_especifico, questionario_do_estudante
+from paginas import conhecimento_especifico, questionario_do_estudante, relatorio
 from pathlib import Path
 import base64
 
@@ -38,9 +38,10 @@ with st.sidebar:
     options=[
         "🏠 Página Inicial",
         "📊 Conhecimento Específico",
-        "📝 Questionário do Estudante"
+        "📝 Questionário do Estudante",
+        "📥 Baixar Relatório"
     ],
-    icons=["🏠","📊","📝"],                 # sem ícones Bootstrap (só os emojis)
+    icons=["🏠","📊","📝","📥"],                 # sem ícones Bootstrap (só os emojis)
     default_index=0,
     styles={
         "container": {
@@ -101,6 +102,8 @@ elif "Conhecimento Específico" in page:
 elif "Questionário do Estudante" in page:
     questionario_do_estudante.show_page()
     st.stop()
+elif "Baixar Relatório" in page:
+    relatorio.show_page()
 
 # Footer
 st.markdown("""

@@ -59,10 +59,17 @@ def show_page():
         st.session_state['curso_op'] = st.session_state['curso']         
                 
         tab1, tab2, tab3= st.tabs(["Gráfico Razão do Percentual", "Gráfico Percentual", "Tabela Ranking"])
-
-        for code,item in COURSE_CODES.items():
+        
+        for code, item in COURSE_CODES.items():
             if item[1] == st.session_state['curso_op'] and item[3] == st.session_state['municipio_op']:
-                fig1, fig2 = plot_performance_graph(item[0], code, ratio_graph=True)
+                result = plot_performance_graph(item[0], code, ratio_graph=True)
+
+                if result is None:
+                    st.warning("Não foi possível gerar os gráficos para esse curso.")
+                    break  # ou continue, se quiser testar os próximos
+
+                fig1, fig1_img, fig2, fig2_img = result
+
                 with tab1:
                     if fig1:
                         st.pyplot(fig1)
@@ -72,3 +79,9 @@ def show_page():
                 with tab3:
                     fig = show_best_hei_ranking_table(item[0], code, public_only=True)
                     st.dataframe(fig, use_container_width=True)
+
+                st.session_state['razao_chart'] = fig1_img
+                st.session_state['percent_chart'] = fig2_img
+                break
+            
+
