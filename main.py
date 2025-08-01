@@ -186,150 +186,56 @@ for curso, file_name in zip(cod_curso,questions_sub_file_name):
 for col in QE_data_2023.columns:
   QE_data_2023[col] = QE_data_2023[col].fillna(0).astype(int)
 
-# def plot_average_graph(course_code: int, questions_list, question_text):
-#     course_ufpa_df = QE_data_2023[
-#         (QE_data_2023["CO_CURSO"] == course_code) &
-#         (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
-#         (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)
-#     ]
+def plot_count_graph(course_code: int, questions_list) -> None:
+    course_ufpa_df = QE_data_2023[
+        (QE_data_2023["CO_CURSO"] == course_code) &
+        (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
+        (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)
+    ]
 
-#     questions_average = []
-#     for question in questions_list:
-#         values = course_ufpa_df[~course_ufpa_df[question].isin([7, 8])][question].values
-#         questions_average.append(round(np.mean(values), 2))
+    um_e_dois = []
+    tres_e_quatro = []
+    cinco_e_seis = []
+    sete_e_oito = []
 
-#     question_labels = [q.replace('QE_I', '') for q in questions_list]
-    
-#     #criando df com todas as infos (media, nome questao e texto questao)
-#     df = pd.DataFrame({
-#         'num_questao': question_labels,
-#         'media_questao': questions_average,
-#         'texto_questao': question_text
-#     })
-    
-#     df['cor'] = df['media_questao'].apply(lambda val: '#00712D' if val == df['media_questao'].max() else '#F09319' if val == df['media_questao'].min() else  '#81A263')
-        
-#     graph = px.bar(df, x='num_questao', 
-#                    y='media_questao', 
-#                    color='cor', 
-#                    color_discrete_map="identity", 
-#                    text='media_questao',
-#                    custom_data=['texto_questao'])
-#                    #hover_data=['text_qe'])
-    
-#     graph.update_layout(
-#         xaxis_type='category',
-#         xaxis=dict(
-#             categoryorder='array',
-#             categoryarray=question_labels
-#         ),
-#         hoverlabel=dict(
-#             bgcolor="white",
-#             font_size=16,
-#             namelength = -1,
-#             align='left'),
-#         legend=dict(orientation="h",  # Horizontal orientation for better top placement
-#                     yanchor="bottom", # Anchor the legend's bottom to the y coordinate
-#                     y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
-#                     xanchor="left",  # Anchor the legend's right to the x coordinate
-#                     x=0,
-#                     font=dict(size=14)),
-#         # font=dict(size=18),
-#         yaxis_title=None,
-#         xaxis_title=None
-#     )
+    for q in questions_list:
+        values_count = course_ufpa_df[q].value_counts(dropna=False).to_dict()
 
-#     graph.update_traces(textposition='outside',
-#                         hovertemplate="<b>Questão %{x}:</b> %{customdata[0]}",
-#                         showlegend=True,
-#                         textfont_size=13.5)
-    
-#     graph.data[1].name = 'Maior média'
-#     graph.data[2].name = 'Menor média'
-#     graph.data[0].showlegend=False
-    
-    # with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
-    #     graph.write_image(tmp_img.name)
-    #     average_chart_img = tmp_img.name
-    
-    # return graph, average_chart_img
+        for i in range(1, 9):
+            values_count.setdefault(i, 0)
 
-    # return graph
+        um_e_dois.append(values_count[1] + values_count[2])
+        tres_e_quatro.append(values_count[3] + values_count[4])
+        cinco_e_seis.append(values_count[5] + values_count[6])
+        sete_e_oito.append(values_count[7] + values_count[8])
 
-def plot_count_graph(course_code: int, questions_list) -> None: 
-  course_ufpa_df = QE_data_2023[(QE_data_2023["CO_CURSO"] == course_code) &
-                            (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
-                            (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)]
+    questions = [q.replace('QE_I', '') for q in questions_list]
 
-  questions = questions_list
+    fig, ax = plt.subplots(figsize=(10, 8))
 
-  values_sum=[]
-  um_e_dois = []
-  tres_e_quatro=[]
-  cinco_e_seis=[]
-  sete_e_oito=[]
+    # Remover bordas
+    for spine in ax.spines.values():
+        spine.set_visible(False)
 
-  for q in questions:
-    values_count = (course_ufpa_df[q].value_counts(dropna=False))
-    index = values_count.index.to_list()
-    values = values_count.values.tolist()
+    # Traçar as linhas
+    ax.plot(questions, um_e_dois, label='Discordo Totalmente + Discordo', color='red')
+    ax.plot(questions, tres_e_quatro, label='Discordo Parc. + Concordo Parc.', color='orange')
+    ax.plot(questions, cinco_e_seis, label='Concordo + Concordo Totalmente', color='green')
+    ax.plot(questions, sete_e_oito, label='Não sei responder + Não se aplica', color='gray')
 
-    dictio = {}
-    for index, value in values_count.items():
-      dictio[index] = value
+    # ax.set_title("Distribuição das Respostas por Questão")
+    # ax.set_xlabel("Questão")
+    # ax.set_ylabel("Contagem de Respostas")
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
 
-    for i in range(1,9):
-      if i in dictio:
-        pass
-      else:
-        dictio.update({i: 0})
+    plt.tight_layout()
 
-    dictio = dict(sorted(dictio.items()))
-
-    values_sum = [dictio[1] + dictio[2], dictio[3] + dictio[4], dictio[5] + dictio[6], dictio[7] + dictio[8]]
-    um_e_dois.append(values_sum[0])
-    tres_e_quatro.append(values_sum[1])
-    cinco_e_seis.append(values_sum[2])
-    sete_e_oito.append(values_sum[3])
-
-  fig = plt.figure(figsize= (4, 2))
-
-  #removing QE_I for bar labels
-  questions = [question.replace('QE_I', '') for question in questions]
-  
-  fig = px.line(x=questions, y=[um_e_dois, tres_e_quatro, cinco_e_seis, sete_e_oito]) 
-
-  fig.update_layout(xaxis_type='category',
-                    yaxis_title=None,
-                    xaxis_title=None,
-                    legend_title_text="",
-                    legend_valign='middle',
-                    legend=dict(
-                        orientation="h",  
-                        yanchor="bottom", 
-                        y=1.02,           
-                        xanchor="right",  
-                        x=1),
-                    hoverlabel=dict(
-                        font_size=16)
-                    )
-  
-  fig.update_traces(hovertemplate='Contagem de respostas: <b>%{y}</b><extra></extra>')
-  
-  fig.data[0].name = 'Total de respostas Discordo Totalmente e Discordo'
-  fig.data[1].name = 'Total de respostas Discordo Parc. e Corcondo Parc.'
-  fig.data[2].name = 'Total de respostas Concordo e Concordo Totalm.'
-  fig.data[3].name = 'Total de respostas Não sei responder e Não se aplica'
-  
-  colors = ['red', 'orange', 'green', 'gray']
-  for i, color in enumerate(colors):
-        fig.data[i].line.color = color
-  
-  with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
-        fig.write_image(tmp_img.name, engine="kaleido")
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
+        fig.savefig(tmp_img.name)
+        plt.close(fig)
         count_chart_img = tmp_img.name
-  
-  return fig, count_chart_img
+
+    return None, count_chart_img
 
 # def plot_average_graph(course_code: int, questions_list, question_text):
 #     course_ufpa_df = QE_data_2023[
@@ -432,18 +338,23 @@ def plot_average_graph(course_code: int, questions_list, question_text):
     )
 
     # Criar gráfico com matplotlib
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 8))
     bars = ax.bar(df['num_questao'], df['media_questao'], color=df['cor'])
 
     # Adicionar rótulos
     for bar, value in zip(bars, df['media_questao']):
         ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.05,
-                f'{value:.2f}', ha='center', va='bottom', fontsize=10)
+                f'{value:.2f}', ha='center', va='bottom', fontsize=15)
 
-    ax.set_title('Média por Questão')
-    ax.set_xlabel('Questão')
-    ax.set_ylabel('Média')
-    ax.set_ylim(0, max(df['media_questao']) + 1)
+    # ax.set_title('Média por Questão')
+    # ax.set_xlabel('Questão')
+    # ax.set_ylabel('Média')
+    # ax.set_ylim(0, max(df['media_questao']) + 1)
+    # ax.
+    
+    # Remover bordas do gráfico
+    for spine in ax.spines.values():
+        spine.set_visible(False)
 
     plt.tight_layout()
 
