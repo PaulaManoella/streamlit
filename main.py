@@ -248,11 +248,11 @@ for col in QE_data_2023.columns:
 #     graph.data[2].name = 'Menor média'
 #     graph.data[0].showlegend=False
     
-    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
-        graph.write_image(tmp_img.name)
-        average_chart_img = tmp_img.name
+  #  with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
+   #     graph.write_image(tmp_img.name)
+    #    average_chart_img = tmp_img.name
     
-    return graph, average_chart_img
+    #return graph, average_chart_img
 
     # return graph
 
