@@ -524,169 +524,6 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
             fig2_img = tmp_img2.name
         
     return fig1, fig1_img, fig2, fig2_img
-    
-def generate_pdf():
-    # Verifica se todas as imagens necessárias estão no session_state
-    required_charts = [
-        'odp_img_av', 'infra_img_av', 'oaf_img_av',
-        'odp_img_co', 'infra_img_co', 'oaf_img_co',
-        'razao_chart', 'percent_chart'
-    ]
-    # missing = [key for key in required_charts if key not in st.session_state]
-    # if missing:
-    #     st.warning(f"Não foi possível gerar o PDF. Faltam os gráficos: {', '.join(missing)}")
-    #     return
-
-    # Inicializa PDF
-    pdf = FPDF(orientation='P', unit='mm', format='A4')
-    pdf.set_auto_page_break(auto=True, margin=15)
-    
-    # pagina curso e municipio
-    pdf.set_y(150)
-    pdf.add_page()
-    pdf.set_font("Times", "B", 20)
-    pdf.cell(0, 10, "Relatório Microdados ENADE 2023 Curso - Município", ln=True, align='C')
-   
-    # pagina apresentação
-    pdf.add_page()
-    pdf.set_y(100)
-    pdf.set_font("Times", "B", 14)
-    pdf.cell(0, 10, "Apresentação", ln=True, align='C')
-    pdf.ln(5)
-    pdf.set_font("Times", size=12)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações de curso na identificação de melhorias a serem implementadas na graduação."
-    ), border=0, align="J")
-    pdf.ln(2)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "As análises compreendem os temas do Componente Específico da prova do Enade e as questões do Questionário do Estudante, relativas às dimensões Organização Didático-pedagógica, Infraestrutura e Instalações Físicas e Oportunidade Ampliação da Formação Profissional."
-    ), border=0, align="J")
-    pdf.ln(2)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "As análises compreendem os temas do Componente Específico da prova do Enade e as questões do Questionário do Estudante, relativas às dimensões Organização Didático-pedagógica, Infraestrutura e Instalações Físicas e Oportunidade Ampliação da Formação Profissional."
-    ), border=0, align="J")
-    
-
-    ### pagina apresentação conhecimento específico
-    pdf.add_page()
-    pdf.set_font("Times", "B", 14)
-    pdf.cell(0, 10, "Análises Conhecimento Específico", ln=True, align='C')
-    pdf.ln(5)
-    pdf.set_font("Times", size=12)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "A análise gráfica fornece informações valiosas a respeito do desempenho dos alunos nas temáticas avaliadas na prova, uma vez que possibilita averiguar se as estratégias pedagógicas aplicadas nas disciplinas ministradas estão produzindo os resultados almejados. São apresentados dois gráficos que exibem a comparação entre o desempenho do curso de graduação da UFPA e o desempenho nacional, calculado a partir do mesmo curso ofertado por todas as IES no país que participam do exame."
-    ), border=0, align="J")
-    pdf.ln(2)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "O Gráfico da Razão do Percentual de Acerto exibe o desempenho do curso da UFPA em comparação com a média nacional, por tema avaliado no ENADE 2023. A interpretação do gráfico da razão é a seguinte: Razão > 2,0: a UFPA apresentou desempenho superior à média nacional; Razão < 2,0: a UFPA obteve desempenho inferior à média nacional; Razão = 2,0: o desempenho da UFPA foi equivalente à média nacional."
-    ), border=0, align="J")
-    pdf.ln(2)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "O Gráfico de Percentual de Acerto por Tema apresenta a comparação entre o percentual de acertos do curso da UFPA e o percentual médio nacional, para cada temática do componente específico da prova."
-    ), border=0, align="J")
-    pdf.ln(2)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "Na Tabela Ranking é apresentada a instituição com melhor percentual de desempenho, por temática do exame, em comparação com o desempenho do curso da UFPA."
-    ), border=0, align="J")
-
-    # graficos conhecimento especifico
-    pdf.add_page()
-    pdf.image(st.session_state['razao_chart'], x=10, w=180)
-    pdf.ln(2)
-    pdf.set_font("Times", size=11)
-    pdf.ln(2)
-    pdf.cell(0,0,"Figura 1: Gráfico Razão do Percentual", align='C')
-    pdf.ln(10)
-
-    pdf.image(st.session_state['percent_chart'], x=10, w=180)
-    pdf.ln(1)
-    pdf.set_font("Times", size=11)
-    pdf.cell(0,0,"Figura 2: Gráfico Percentual do Acerto", align='C')
-
-    ### página apresentação questionario do estudante
-    pdf.add_page()
-    pdf.set_font("Times", "B", 14)
-    pdf.cell(0, 10, "Análises Questionário do Estudante", ln=True, align='C')
-    pdf.ln(5)
-    pdf.set_font("Times", size=12)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "Para cada questão no Questionário do Estudante, são disponibilizadas 6 alternativas de resposta que indicam o grau de concordância com cada assertiva, "
-        "em uma escala que varia de 1 (discordância total) a 6 (concordância total), além das alternativas 7 (Não sei responder) e 8 (Não se aplica)."
-    ), border=0, align="J")
-    pdf.ln(1)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "Para cada dimensão do questionário, foram gerados dois gráficos. O gráfico de barras apresenta a média atribuída pelos alunos para cada questão, "
-        "excluídas as alternativas 7 e 8. São destacadas as questões com a maior e a menor média."
-    ), border=0, align="J")
-    pdf.ln(1)
-    pdf.multi_cell(w=0, h=6, txt=(
-        "O gráfico de linhas representa, por questão, o total de respostas absolutas (contagem) agrupadas pelo tipo de alternativa escolhida, da seguinte forma: 1-2; 3-4; 5-6; 7-8."
-    ), border=0, align="J")
-
-    ### graficos odp
-    pdf.add_page()
-    pdf.cell(0, 10, "Organização Didático Pedagógica", ln=True)
-    pdf.image(st.session_state['odp_img_av'], x=30, w=150)
-    pdf.ln(1)
-    pdf.set_font("Times", size=11)
-    pdf.cell(0,0,"Figura 3: Gráfico de Médias Organização Didático-Pedagógica", align='C')
-    pdf.ln(1)
-    pdf.image(st.session_state['odp_img_co'], x=30, w=150)
-    pdf.ln(1)
-    pdf.set_font("Times", size=11)
-    pdf.cell(0,0,"Figura 3: Gráfico de Linhas Organização Didático-Pedagógica", align='C')
-
-    ### Página 4 – Infraestrutura
-    pdf.add_page()
-    pdf.cell(0, 10, "Infraestrutura e Instalações Físicas", ln=True)
-    pdf.image(st.session_state['infra_img_av'], x=10, w=180)
-    pdf.ln(1)
-    pdf.image(st.session_state['infra_img_co'], x=10, w=180)
-
-    ### Página 5 – Oportunidades de Ampliação da Formação
-    pdf.add_page()
-    pdf.cell(0, 10, "Oportunidades de Ampliação da Formação", ln=True)
-    pdf.image(st.session_state['oaf_img_av'], x=10, w=180)
-    pdf.ln(3)
-    pdf.image(st.session_state['oaf_img_co'], x=10, w=180)
-    
-    # pagina anexo
-    pdf.add_page()
-    pdf.set_font("Times", "B", 14)
-    pdf.cell(0, 10, "Anexo Questionário do Estudante", ln=True, align='C')
-
-    # Salvar em arquivo temporário
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
-        pdf.output(tmp_pdf.name)
-        # return tmp_pdf.name
-    anexo_path = "anexo_qe_2023.pdf"
-    capa_path= "src/file/capa_relatorio.pdf"
-
-# Novo PDF combinando ambos
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as final_pdf:
-        writer = PdfWriter()
-        
-        # lendo e inserindo capa pdf
-        capa_pdf = PdfReader(capa_path)
-        for page in capa_pdf.pages:
-            writer.add_page(page)
-
-        # ✅ 1. Adiciona páginas do PDF gerado com fpdf
-        reader_fpdf = PdfReader(tmp_pdf.name)
-        for page in reader_fpdf.pages:
-            writer.add_page(page)
-
-        # ✅ 2. Adiciona páginas do PDF existente
-        reader_existente = PdfReader(anexo_path)
-        for page in reader_existente.pages:
-            writer.add_page(page)
-
-        # ✅ 3. Escreve o PDF final com ambos os conteúdos
-        writer.write(final_pdf)
-        caminho_final = final_pdf.name
-
-    # Agora `caminho_final` é o PDF completo
-    return caminho_final    
 
 #     anexo_path = "anexo_qe_2023.pdf"  # <- substitua com o caminho real
 
@@ -718,9 +555,9 @@ def generate_pdf():
     #         mime="application/pdf"
     #     ) 
 
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img2:
-            fig2.savefig(tmp_img2.name, dpi=150, bbox_inches='tight')
-            fig2_img = tmp_img2.name
+     #   with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img2:
+      #      fig2.savefig(tmp_img2.name, dpi=150, bbox_inches='tight')
+       #     fig2_img = tmp_img2.name
 
     # if absolute_graph:
     #     fig2, ax = plt.subplots(figsize=(8, 8))
@@ -763,7 +600,7 @@ def generate_pdf():
 
     #     fig2.suptitle(title, fontsize=18, x=0.28, y=0.93)
         
-    return fig1, fig1_img, fig2, fig2_img
+ #   return fig1, fig1_img, fig2, fig2_img
     
 def generate_pdf():
     # Verifica se todas as imagens necessárias estão no session_state
