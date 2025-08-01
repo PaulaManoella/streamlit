@@ -123,40 +123,40 @@ def show_page():
                 
                 oaf_chart_av, oaf_img_av = plot_average_graph(code, oaf_questions, oaf_questions_text)
                 
-                # charts and imgs charts count
-                odp_chart_co, odp_img_co = plot_count_graph(code, odp_questions)
+                # # charts and imgs charts count
+                # odp_chart_co, odp_img_co = plot_count_graph(code, odp_questions)
                 
-                infra_chart_co, infra_img_co = plot_count_graph(code, infra_questions)
+                # infra_chart_co, infra_img_co = plot_count_graph(code, infra_questions)
                 
-                oaf_chart_co, oaf_img_co = plot_count_graph(code, oaf_questions)
+                # oaf_chart_co, oaf_img_co = plot_count_graph(code, oaf_questions)
                 
                 with tab1:
                     col1, col2 = st.columns(2)
                     with col1:
                         st.plotly_chart(odp_chart_av, use_container_width=True)
-                    with col2:
-                        st.plotly_chart(odp_chart_co, use_container_width=True)
+                    # with col2:
+                    #     st.plotly_chart(odp_chart_co, use_container_width=True)
                         
                 with tab2:
                     col1, col2 = st.columns(2)
                     with col1:
                         st.plotly_chart(infra_chart_av, use_container_width=True)
-                    with col2:
-                        st.plotly_chart(infra_chart_co, use_container_width=True)
+                    # with col2:
+                    #     st.plotly_chart(infra_chart_co, use_container_width=True)
                         
                 with tab3:
                     col1, col2 = st.columns(2)
                     with col1:
                         st.plotly_chart(oaf_chart_av, use_container_width=True)
-                    with col2:
-                        st.plotly_chart(oaf_chart_co, use_container_width=True)
+                    # with col2:
+                    #     st.plotly_chart(oaf_chart_co, use_container_width=True)
                 
                 st.session_state['odp_img_av'] = odp_img_av
                 st.session_state['infra_img_av'] = infra_img_av
                 st.session_state['oaf_img_av'] = oaf_img_av
-                st.session_state['odp_img_co'] = odp_img_co
-                st.session_state['infra_img_co'] = infra_img_co
-                st.session_state['oaf_img_co'] = oaf_img_co
+                # st.session_state['odp_img_co'] = odp_img_co
+                # st.session_state['infra_img_co'] = infra_img_co
+                # st.session_state['oaf_img_co'] = oaf_img_co
                     
                 # break  
 
