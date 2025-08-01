@@ -133,21 +133,21 @@ def show_page():
                 with tab1:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.image(odp_chart_av, use_container_width=True)
+                        st.image(odp_img_av, use_container_width=True)
                     # with col2:
                     #     st.image(odp_chart_co, use_container_width=True)
-                        
+
                 with tab2:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.image(infra_chart_av, use_container_width=True)
+                        st.image(infra_img_av, use_container_width=True)
                     # with col2:
                     #     st.image(infra_chart_co, use_container_width=True)
-                        
+
                 with tab3:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.image(oaf_chart_av, use_container_width=True)
+                        st.image(oaf_img_av, use_container_width=True)
                     # with col2:
                     #     st.image(oaf_chart_co, use_container_width=True)
                 
