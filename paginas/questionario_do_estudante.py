@@ -106,37 +106,59 @@ def show_page():
 
         for code, item in COURSE_CODES.items():
             if item[1] == st.session_state['curso_op'] and item[3] == st.session_state['municipio_op']:
+                
+                odp_questions = ['QE_I27', 'QE_I28', 'QE_I29', 'QE_I30', 'QE_I31', 'QE_I32', 'QE_I33', 'QE_I34', 'QE_I35',
+                                'QE_I36', 'QE_I37', 'QE_I38', 'QE_I39', 'QE_I40', 'QE_I42', 'QE_I47', 'QE_I48', 'QE_I49',
+                                'QE_I51', 'QE_I55', 'QE_I57', 'QE_I66']
+                
+                infra_questions = ['QE_I50', 'QE_I54', 'QE_I56', 'QE_I58', 'QE_I59', 'QE_I60', 'QE_I61', 'QE_I62',
+                                'QE_I63', 'QE_I64', 'QE_I65', 'QE_I67', 'QE_I68']
+                
+                oaf_questions = ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']
+                
+                # charts and imgs charts - average
+                odp_chart_av, odp_img_av = plot_average_graph(code, odp_questions, odp_questions_text)
+                
+                infra_chart_av, infra_img_av = plot_average_graph(code, infra_questions, infra_questions_text)
+                
+                oaf_chart_av, oaf_img_av = plot_average_graph(code, oaf_questions, oaf_questions_text)
+                
+                # charts and imgs charts count
+                odp_chart_co, odp_img_co = plot_count_graph(code, odp_questions)
+                
+                infra_chart_co, infra_img_co = plot_count_graph(code, infra_questions)
+                
+                oaf_chart_co, oaf_img_co = plot_count_graph(code, oaf_questions)
+                
                 with tab1:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.plotly_chart(plot_average_graph(
-                            code,
-                            ['QE_I27', 'QE_I28', 'QE_I29', 'QE_I30', 'QE_I31', 'QE_I32', 'QE_I33', 'QE_I34', 'QE_I35', 'QE_I36', 'QE_I37', 'QE_I38', 'QE_I39', 'QE_I40', 'QE_I42', 'QE_I47', 'QE_I48', 'QE_I49', 'QE_I51', 'QE_I55', 'QE_I57', 'QE_I66'],odp_questions_text), use_container_width=True)
+                        st.plotly_chart(odp_chart_av, use_container_width=True)
                     with col2:
-                        st.plotly_chart(plot_count_graph(
-                            code,
-                            ['QE_I27', 'QE_I28', 'QE_I29', 'QE_I30', 'QE_I31', 'QE_I32', 'QE_I33', 'QE_I34', 'QE_I35', 'QE_I36', 'QE_I37', 'QE_I38', 'QE_I39', 'QE_I40', 'QE_I42', 'QE_I47', 'QE_I48', 'QE_I49', 'QE_I51', 'QE_I55', 'QE_I57', 'QE_I66']), use_container_width=True)
+                        st.plotly_chart(odp_chart_co, use_container_width=True)
+                        
                 with tab2:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.plotly_chart(plot_average_graph(code, 
-                        ['QE_I50', 'QE_I54', 'QE_I56', 'QE_I58', 'QE_I59', 'QE_I60', 'QE_I61','QE_I62', 'QE_I63', 'QE_I64', 'QE_I65', 'QE_I67', 'QE_I68'],infra_questions_text), use_container_width=True)
+                        st.plotly_chart(infra_chart_av, use_container_width=True)
                     with col2:
-                        st.plotly_chart(plot_count_graph(code, 
-                        ['QE_I50', 'QE_I54', 'QE_I56', 'QE_I58', 'QE_I59', 'QE_I60', 'QE_I61','QE_I62', 'QE_I63', 'QE_I64', 'QE_I65', 'QE_I67', 'QE_I68']), use_container_width=True)
+                        st.plotly_chart(infra_chart_co, use_container_width=True)
+                        
                 with tab3:
                     col1, col2 = st.columns(2)
-                    
                     with col1:
-                        st.plotly_chart(plot_average_graph(code, 
-                                                    ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53'],
-                                                    oaf_questions_text), use_container_width=True)
+                        st.plotly_chart(oaf_chart_av, use_container_width=True)
                     with col2:
-                        st.plotly_chart(plot_count_graph(code, 
-                                                    ['QE_I43', 'QE_I44', 'QE_I45', 'QE_I46', 'QE_I52', 'QE_I53']), use_container_width=True)
+                        st.plotly_chart(oaf_chart_co, use_container_width=True)
+                
+                st.session_state['odp_img_av'] = odp_img_av
+                st.session_state['infra_img_av'] = infra_img_av
+                st.session_state['oaf_img_av'] = oaf_img_av
+                st.session_state['odp_img_co'] = odp_img_co
+                st.session_state['infra_img_co'] = infra_img_co
+                st.session_state['oaf_img_co'] = oaf_img_co
                     
-
-                break  
+                # break  
 
         with tab4:
             pdf_viewer(
