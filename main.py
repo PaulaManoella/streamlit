@@ -8,6 +8,11 @@ from matplotlib.ticker import FormatStrFormatter
 from textwrap import fill
 
 import plotly.express as px
+import tempfile
+from fpdf import FPDF
+from PyPDF2 import PdfReader, PdfWriter
+import streamlit as st
+import plotly.io as pio
 
 
 ENADE_2023_CE_URL = "https://github.com/PaulaManoella/Microdados-Enade/raw/main/databases2023/microdados2023_arq3.zip"
@@ -181,69 +186,75 @@ for curso, file_name in zip(cod_curso,questions_sub_file_name):
 for col in QE_data_2023.columns:
   QE_data_2023[col] = QE_data_2023[col].fillna(0).astype(int)
 
-def plot_average_graph(course_code: int, questions_list, question_text):
-    course_ufpa_df = QE_data_2023[
-        (QE_data_2023["CO_CURSO"] == course_code) &
-        (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
-        (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)
-    ]
+# def plot_average_graph(course_code: int, questions_list, question_text):
+#     course_ufpa_df = QE_data_2023[
+#         (QE_data_2023["CO_CURSO"] == course_code) &
+#         (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
+#         (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)
+#     ]
 
-    questions_average = []
-    for question in questions_list:
-        values = course_ufpa_df[~course_ufpa_df[question].isin([7, 8])][question].values
-        questions_average.append(round(np.mean(values), 2))
+#     questions_average = []
+#     for question in questions_list:
+#         values = course_ufpa_df[~course_ufpa_df[question].isin([7, 8])][question].values
+#         questions_average.append(round(np.mean(values), 2))
 
-    question_labels = [q.replace('QE_I', '') for q in questions_list]
+#     question_labels = [q.replace('QE_I', '') for q in questions_list]
     
-    #criando df com todas as infos (media, nome questao e texto questao)
-    df = pd.DataFrame({
-        'num_questao': question_labels,
-        'media_questao': questions_average,
-        'texto_questao': question_text
-    })
+#     #criando df com todas as infos (media, nome questao e texto questao)
+#     df = pd.DataFrame({
+#         'num_questao': question_labels,
+#         'media_questao': questions_average,
+#         'texto_questao': question_text
+#     })
     
-    df['cor'] = df['media_questao'].apply(lambda val: '#00712D' if val == df['media_questao'].max() else '#F09319' if val == df['media_questao'].min() else  '#81A263')
+#     df['cor'] = df['media_questao'].apply(lambda val: '#00712D' if val == df['media_questao'].max() else '#F09319' if val == df['media_questao'].min() else  '#81A263')
         
-    graph = px.bar(df, x='num_questao', 
-                   y='media_questao', 
-                   color='cor', 
-                   color_discrete_map="identity", 
-                   text='media_questao',
-                   custom_data=['texto_questao'])
-                   #hover_data=['text_qe'])
+#     graph = px.bar(df, x='num_questao', 
+#                    y='media_questao', 
+#                    color='cor', 
+#                    color_discrete_map="identity", 
+#                    text='media_questao',
+#                    custom_data=['texto_questao'])
+#                    #hover_data=['text_qe'])
     
-    graph.update_layout(
-        xaxis_type='category',
-        xaxis=dict(
-            categoryorder='array',
-            categoryarray=question_labels
-        ),
-        hoverlabel=dict(
-            bgcolor="white",
-            font_size=16,
-            namelength = -1,
-            align='left'),
-        legend=dict(orientation="h",  # Horizontal orientation for better top placement
-                    yanchor="bottom", # Anchor the legend's bottom to the y coordinate
-                    y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
-                    xanchor="left",  # Anchor the legend's right to the x coordinate
-                    x=0,
-                    font=dict(size=14)),
-        # font=dict(size=18),
-        yaxis_title=None,
-        xaxis_title=None
-    )
+#     graph.update_layout(
+#         xaxis_type='category',
+#         xaxis=dict(
+#             categoryorder='array',
+#             categoryarray=question_labels
+#         ),
+#         hoverlabel=dict(
+#             bgcolor="white",
+#             font_size=16,
+#             namelength = -1,
+#             align='left'),
+#         legend=dict(orientation="h",  # Horizontal orientation for better top placement
+#                     yanchor="bottom", # Anchor the legend's bottom to the y coordinate
+#                     y=1.02,           # Position slightly above the plot area (y=1 is top of plot)
+#                     xanchor="left",  # Anchor the legend's right to the x coordinate
+#                     x=0,
+#                     font=dict(size=14)),
+#         # font=dict(size=18),
+#         yaxis_title=None,
+#         xaxis_title=None
+#     )
 
-    graph.update_traces(textposition='outside',
-                        hovertemplate="<b>Questão %{x}:</b> %{customdata[0]}",
-                        showlegend=True,
-                        textfont_size=13.5)
+#     graph.update_traces(textposition='outside',
+#                         hovertemplate="<b>Questão %{x}:</b> %{customdata[0]}",
+#                         showlegend=True,
+#                         textfont_size=13.5)
     
-    graph.data[1].name = 'Maior média'
-    graph.data[2].name = 'Menor média'
-    graph.data[0].showlegend=False
+#     graph.data[1].name = 'Maior média'
+#     graph.data[2].name = 'Menor média'
+#     graph.data[0].showlegend=False
     
-    return graph
+#     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
+#         graph.write_image(tmp_img.name)
+#         average_chart_img = tmp_img.name
+    
+#     return graph, average_chart_img
+
+#     # return graph
 
 def plot_count_graph(course_code: int, questions_list) -> None: 
   course_ufpa_df = QE_data_2023[(QE_data_2023["CO_CURSO"] == course_code) &
@@ -310,11 +321,93 @@ def plot_count_graph(course_code: int, questions_list) -> None:
   fig.data[2].name = 'Total de respostas Concordo e Concordo Totalm.'
   fig.data[3].name = 'Total de respostas Não sei responder e Não se aplica'
   
+  colors = ['red', 'orange', 'green', 'gray']
+  for i, color in enumerate(colors):
+        fig.data[i].line.color = color
   
+  with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
+        fig.write_image(tmp_img.name, engine="kaleido")
+        count_chart_img = tmp_img.name
   
-  return fig
+  return fig, count_chart_img
+
+def plot_average_graph(course_code: int, questions_list, question_text):
+    course_ufpa_df = QE_data_2023[
+        (QE_data_2023["CO_CURSO"] == course_code) &
+        (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
+        (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)
+    ]
+
+    questions_average = []
+    for question in questions_list:
+        values = course_ufpa_df[~course_ufpa_df[question].isin([7, 8])][question].values
+        questions_average.append(round(np.mean(values), 2))
+
+    question_labels = [q.replace('QE_I', '') for q in questions_list]
+
+    df = pd.DataFrame({
+        'num_questao': question_labels,
+        'media_questao': questions_average,
+        'texto_questao': question_text
+    })
+
+    df['cor'] = df['media_questao'].apply(
+        lambda val: '#00712D' if val == df['media_questao'].max()
+        else '#F09319' if val == df['media_questao'].min()
+        else '#81A263'
+    )
+
+    graph = px.bar(
+        df, x='num_questao', y='media_questao',
+        color='cor', color_discrete_map="identity",
+        text='media_questao',
+        custom_data=['texto_questao']
+    )
+
+    graph.update_layout(
+        xaxis_type='category',
+        xaxis=dict(categoryorder='array', categoryarray=question_labels),
+        hoverlabel=dict(
+            bgcolor="white", font_size=16, namelength=-1, align='left'
+        ),
+        legend=dict(
+            orientation="h", yanchor="bottom", y=1.02,
+            xanchor="left", x=0, font=dict(size=14)
+        ),
+        yaxis_title=None,
+        xaxis_title=None
+    )
+
+    graph.update_traces(
+        textposition='outside',
+        hovertemplate="<b>Questão %{x}:</b> %{customdata[0]}",
+        showlegend=True,
+        textfont_size=13.5
+    )
+
+    # Nomear as legendas manualmente
+    graph.data[1].name = 'Maior média'
+    graph.data[2].name = 'Menor média'
+    graph.data[0].showlegend = False
+
+    # ✅ Renderiza imagem em memória com plotly.io
+    buf = BytesIO()
+    img_bytes = pio.to_image(graph, format="png")
+    buf.write(img_bytes)
+    buf.seek(0)
+
+    # ✅ Salva em arquivo temporário para uso no PDF
+    with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
+        tmp_img.write(buf.read())
+        average_chart_img = tmp_img.name
+
+    return graph, average_chart_img
+  
 
 def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, absolute_graph=True) -> None:
+    
+    fig1, fig2=None,None
+    fig1_img, fig2_img=None,None
 
     #sk_national_df é o dataframe filtrado a partir do valor de CO_GRUPO informado (NACIONAL)
     sk_national_df = Enade_2023[Enade_2023["CO_GRUPO"] == group_code]
@@ -337,8 +430,8 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
     
     if ratio_graph:
         title = (
-            f"Razão do percentual de acerto UFPA-Brasil em {COURSE_CODES[course_code][1]} "
-            f"- {COURSE_CODES[course_code][3]} por tema no Enade 2023"
+            f"Razão do percentual de acerto UFPA Brasil em {COURSE_CODES[course_code][1]} "
+            f" {COURSE_CODES[course_code][3]} por tema no Enade 2023"
         )
 
         fig1, ax = plt.subplots(figsize=(6, 6))
@@ -375,6 +468,10 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
         plt.xlim(min_xlim - r, 2 - min_xlim + r)
 
         fig1.suptitle(title, fontsize=15, x=0.25, y=0.93)  
+        
+        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img1:
+            fig1.savefig(tmp_img1.name, dpi=150, bbox_inches='tight')
+            fig1_img = tmp_img1.name
     
     if absolute_graph:
         fig2, ax = plt.subplots(figsize=(8, 8))
@@ -398,7 +495,6 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
             for x in merged_score_df_filtered.index
         ]
 
-        # Gráfico de Barras representando a UFPA e o Brasil
         ax.barh(ind, merged_score_df_filtered["Nota UFPA (%)"], width, color='dodgerblue', label="UFPA")
         ax.barh(ind + width, merged_score_df_filtered["Nota Enade (%)"], width, color='mediumspringgreen', label="Brasil")
 
@@ -416,8 +512,205 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
         plt.gca().invert_yaxis()
 
         fig2.suptitle(title, fontsize=18, x=0.28, y=0.93)
+
+        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img2:
+            fig2.savefig(tmp_img2.name, dpi=150, bbox_inches='tight')
+            fig2_img = tmp_img2.name
         
-    return fig1, fig2
+    return fig1, fig1_img, fig2, fig2_img
+    
+def generate_pdf():
+    # Verifica se todas as imagens necessárias estão no session_state
+    required_charts = [
+        'odp_img_av', 'infra_img_av', 'oaf_img_av',
+        'odp_img_co', 'infra_img_co', 'oaf_img_co',
+        'razao_chart', 'percent_chart'
+    ]
+    # missing = [key for key in required_charts if key not in st.session_state]
+    # if missing:
+    #     st.warning(f"Não foi possível gerar o PDF. Faltam os gráficos: {', '.join(missing)}")
+    #     return
+
+    # Inicializa PDF
+    pdf = FPDF(orientation='P', unit='mm', format='A4')
+    pdf.set_auto_page_break(auto=True, margin=15)
+    
+    # pagina curso e municipio
+    pdf.set_y(150)
+    pdf.add_page()
+    pdf.set_font("Times", "B", 20)
+    pdf.cell(0, 10, "Relatório Microdados ENADE 2023 Curso - Município", ln=True, align='C')
+   
+    # pagina apresentação
+    pdf.add_page()
+    pdf.set_y(100)
+    pdf.set_font("Times", "B", 14)
+    pdf.cell(0, 10, "Apresentação", ln=True, align='C')
+    pdf.ln(5)
+    pdf.set_font("Times", size=12)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações de curso na identificação de melhorias a serem implementadas na graduação."
+    ), border=0, align="J")
+    pdf.ln(2)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "As análises compreendem os temas do Componente Específico da prova do Enade e as questões do Questionário do Estudante, relativas às dimensões Organização Didático-pedagógica, Infraestrutura e Instalações Físicas e Oportunidade Ampliação da Formação Profissional."
+    ), border=0, align="J")
+    pdf.ln(2)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "As análises compreendem os temas do Componente Específico da prova do Enade e as questões do Questionário do Estudante, relativas às dimensões Organização Didático-pedagógica, Infraestrutura e Instalações Físicas e Oportunidade Ampliação da Formação Profissional."
+    ), border=0, align="J")
+    
+
+    ### pagina apresentação conhecimento específico
+    pdf.add_page()
+    pdf.set_font("Times", "B", 14)
+    pdf.cell(0, 10, "Análises Conhecimento Específico", ln=True, align='C')
+    pdf.ln(5)
+    pdf.set_font("Times", size=12)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "A análise gráfica fornece informações valiosas a respeito do desempenho dos alunos nas temáticas avaliadas na prova, uma vez que possibilita averiguar se as estratégias pedagógicas aplicadas nas disciplinas ministradas estão produzindo os resultados almejados. São apresentados dois gráficos que exibem a comparação entre o desempenho do curso de graduação da UFPA e o desempenho nacional, calculado a partir do mesmo curso ofertado por todas as IES no país que participam do exame."
+    ), border=0, align="J")
+    pdf.ln(2)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "O Gráfico da Razão do Percentual de Acerto exibe o desempenho do curso da UFPA em comparação com a média nacional, por tema avaliado no ENADE 2023. A interpretação do gráfico da razão é a seguinte: Razão > 2,0: a UFPA apresentou desempenho superior à média nacional; Razão < 2,0: a UFPA obteve desempenho inferior à média nacional; Razão = 2,0: o desempenho da UFPA foi equivalente à média nacional."
+    ), border=0, align="J")
+    pdf.ln(2)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "O Gráfico de Percentual de Acerto por Tema apresenta a comparação entre o percentual de acertos do curso da UFPA e o percentual médio nacional, para cada temática do componente específico da prova."
+    ), border=0, align="J")
+    pdf.ln(2)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "Na Tabela Ranking é apresentada a instituição com melhor percentual de desempenho, por temática do exame, em comparação com o desempenho do curso da UFPA."
+    ), border=0, align="J")
+
+    # graficos conhecimento especifico
+    pdf.add_page()
+    pdf.image(st.session_state['razao_chart'], x=10, w=180)
+    pdf.ln(2)
+    pdf.set_font("Times", size=11)
+    pdf.ln(2)
+    pdf.cell(0,0,"Figura 1: Gráfico Razão do Percentual", align='C')
+    pdf.ln(10)
+
+    pdf.image(st.session_state['percent_chart'], x=10, w=180)
+    pdf.ln(1)
+    pdf.set_font("Times", size=11)
+    pdf.cell(0,0,"Figura 2: Gráfico Percentual do Acerto", align='C')
+
+    ### página apresentação questionario do estudante
+    pdf.add_page()
+    pdf.set_font("Times", "B", 14)
+    pdf.cell(0, 10, "Análises Questionário do Estudante", ln=True, align='C')
+    pdf.ln(5)
+    pdf.set_font("Times", size=12)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "Para cada questão no Questionário do Estudante, são disponibilizadas 6 alternativas de resposta que indicam o grau de concordância com cada assertiva, "
+        "em uma escala que varia de 1 (discordância total) a 6 (concordância total), além das alternativas 7 (Não sei responder) e 8 (Não se aplica)."
+    ), border=0, align="J")
+    pdf.ln(1)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "Para cada dimensão do questionário, foram gerados dois gráficos. O gráfico de barras apresenta a média atribuída pelos alunos para cada questão, "
+        "excluídas as alternativas 7 e 8. São destacadas as questões com a maior e a menor média."
+    ), border=0, align="J")
+    pdf.ln(1)
+    pdf.multi_cell(w=0, h=6, txt=(
+        "O gráfico de linhas representa, por questão, o total de respostas absolutas (contagem) agrupadas pelo tipo de alternativa escolhida, da seguinte forma: 1-2; 3-4; 5-6; 7-8."
+    ), border=0, align="J")
+
+    ### graficos odp
+    pdf.add_page()
+    pdf.cell(0, 10, "Organização Didático Pedagógica", ln=True)
+    pdf.image(st.session_state['odp_img_av'], x=30, w=150)
+    pdf.ln(1)
+    pdf.set_font("Times", size=11)
+    pdf.cell(0,0,"Figura 3: Gráfico de Médias Organização Didático-Pedagógica", align='C')
+    pdf.ln(1)
+    pdf.image(st.session_state['odp_img_co'], x=30, w=150)
+    pdf.ln(1)
+    pdf.set_font("Times", size=11)
+    pdf.cell(0,0,"Figura 3: Gráfico de Linhas Organização Didático-Pedagógica", align='C')
+
+    ### Página 4 – Infraestrutura
+    pdf.add_page()
+    pdf.cell(0, 10, "Infraestrutura e Instalações Físicas", ln=True)
+    pdf.image(st.session_state['infra_img_av'], x=10, w=180)
+    pdf.ln(1)
+    pdf.image(st.session_state['infra_img_co'], x=10, w=180)
+
+    ### Página 5 – Oportunidades de Ampliação da Formação
+    pdf.add_page()
+    pdf.cell(0, 10, "Oportunidades de Ampliação da Formação", ln=True)
+    pdf.image(st.session_state['oaf_img_av'], x=10, w=180)
+    pdf.ln(3)
+    pdf.image(st.session_state['oaf_img_co'], x=10, w=180)
+    
+    # pagina anexo
+    pdf.add_page()
+    pdf.set_font("Times", "B", 14)
+    pdf.cell(0, 10, "Anexo Questionário do Estudante", ln=True, align='C')
+
+    # Salvar em arquivo temporário
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp_pdf:
+        pdf.output(tmp_pdf.name)
+        # return tmp_pdf.name
+    anexo_path = "anexo_qe_2023.pdf"
+    capa_path= "src/file/capa_relatorio.pdf"
+
+# Novo PDF combinando ambos
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as final_pdf:
+        writer = PdfWriter()
+        
+        # lendo e inserindo capa pdf
+        capa_pdf = PdfReader(capa_path)
+        for page in capa_pdf.pages:
+            writer.add_page(page)
+
+        # ✅ 1. Adiciona páginas do PDF gerado com fpdf
+        reader_fpdf = PdfReader(tmp_pdf.name)
+        for page in reader_fpdf.pages:
+            writer.add_page(page)
+
+        # ✅ 2. Adiciona páginas do PDF existente
+        reader_existente = PdfReader(anexo_path)
+        for page in reader_existente.pages:
+            writer.add_page(page)
+
+        # ✅ 3. Escreve o PDF final com ambos os conteúdos
+        writer.write(final_pdf)
+        caminho_final = final_pdf.name
+
+    # Agora `caminho_final` é o PDF completo
+    return caminho_final    
+
+#     anexo_path = "anexo_qe_2023.pdf"  # <- substitua com o caminho real
+
+# # Novo PDF combinando ambos
+#     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as final_pdf:
+#         writer = PdfWriter()
+
+#         # Adiciona páginas do PDF gerado com fpdf
+#         reader_fpdf = PdfReader(anexo_path)
+#         for page in reader_fpdf.pages:
+#             writer.add_page(page)
+
+#         # Adiciona páginas do PDF existente
+#         reader_existente = PdfReader(anexo_path)
+#         for page in reader_existente.pages:
+#             writer.add_page(page)
+
+#         # Escreve o PDF final
+#         writer.write(final_pdf)
+#         return final_pdf.name
+
+    
+    # Botão de download
+    # with open(temp_pdf_path, "rb") as f:
+    #     st.download_button(
+    #         "📄 Baixar PDF com Gráficos",
+    #         data=f,
+    #         file_name="graficos_dimensoes.pdf",
+    #         mime="application/pdf"
+    #     ) 
        
 def get_subjects_per_question(questions_subjects_df: pd.DataFrame) -> pd.Series:
 
