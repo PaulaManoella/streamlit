@@ -133,23 +133,23 @@ def show_page():
                 with tab1:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.plotly_chart(odp_chart_av, use_container_width=True)
+                        st.image(odp_chart_av, use_container_width=True)
                     # with col2:
-                    #     st.plotly_chart(odp_chart_co, use_container_width=True)
+                    #     st.image(odp_chart_co, use_container_width=True)
                         
                 with tab2:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.plotly_chart(infra_chart_av, use_container_width=True)
+                        st.image(infra_chart_av, use_container_width=True)
                     # with col2:
-                    #     st.plotly_chart(infra_chart_co, use_container_width=True)
+                    #     st.image(infra_chart_co, use_container_width=True)
                         
                 with tab3:
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.plotly_chart(oaf_chart_av, use_container_width=True)
+                        st.image(oaf_chart_av, use_container_width=True)
                     # with col2:
-                    #     st.plotly_chart(oaf_chart_co, use_container_width=True)
+                    #     st.image(oaf_chart_co, use_container_width=True)
                 
                 st.session_state['odp_img_av'] = odp_img_av
                 st.session_state['infra_img_av'] = infra_img_av
