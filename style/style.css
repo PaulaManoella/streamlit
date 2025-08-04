@@ -39,7 +39,7 @@ body,
 
 .logo-container {
     display: flex;
-    justify-content: left;
+    justify-content: end;
     align-items: center;
     margin-bottom: 1rem;
 }

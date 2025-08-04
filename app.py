@@ -89,12 +89,15 @@ if page == "🏠 Página Inicial":
     <div class="intro-card">
         <h2>Apresentação</h2>
         <div class="intro-content">
-            <p>A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações de curso na identificação de melhorias a serem implementadas na graduação.</p>
+            <p>A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações na identificação de fragilidades para subdisiar ações corretivas e preventivas nos cursos de gradução.</p>
             <p>As análises compreendem os temas do <b>Componente Específico</b> da prova do Enade e as questões do <b>Questionário do Estudante</b>, relativas às dimensões <b>Organização Didático-pedagógica</b>, <b>Infraestrutura e Instalações Físicas</b> e <b>Oportunidade Ampliação da Formação Profissional</b>.</p>
             <p>Para visualizar as análises, utilize o menu lateral para navegar entre as páginas <b>Conhecimento Específico</b> e <b>Questionário do Estudante</b>. </p>
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+# identificação de fragilidades para subsidiar acçoes corretivs e preventivcas nos cursos de graduação
+# de melhorias 
 
 elif "Conhecimento Específico" in page:
     conhecimento_especifico.show_page()

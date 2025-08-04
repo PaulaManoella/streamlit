@@ -573,12 +573,12 @@ def generate_pdf():
     pdf.set_font("Times", size=11)
     pdf.set_text_color(0, 0, 0)   
     pdf.ln(5)
-    pdf.cell(0,0,"Figura x: Gráfico de Médias Infraestrutura e Instalações Físicas", align='C')
+    pdf.cell(0,0,"Figura 5: Gráfico de Médias Infraestrutura e Instalações Físicas", align='C')
     
     pdf.ln(15)
     pdf.image(st.session_state['infra_img_co'], x=30, w=150)
     pdf.set_font("Times", size=11)
-    pdf.cell(0,0,"Figura x: Gráfico de Linhas Infraestrutura e Instalações Físicas", align='C')
+    pdf.cell(0,0,"Figura 6: Gráfico de Linhas Infraestrutura e Instalações Físicas", align='C')
 
     ### Página 5 – Oportunidades de Ampliação da Formação
     pdf.add_page()
@@ -589,12 +589,12 @@ def generate_pdf():
     pdf.set_font("Times", size=11)
     pdf.set_text_color(0, 0, 0)   
     pdf.ln(5)
-    pdf.cell(0,0,"Figura x: Gráfico de Médias Oportunidades de Ampliação da Formação", align='C')
+    pdf.cell(0,0,"Figura 7: Gráfico de Médias Oportunidades de Ampliação da Formação", align='C')
     pdf.ln(15)
     
     pdf.image(st.session_state['oaf_img_co'], x=30, w=150)
     pdf.set_font("Times", size=11)
-    pdf.cell(0,0,"Figura x: Gráfico de Linhas Oportunidades de Ampliação da Formação", align='C')
+    pdf.cell(0,0,"Figura 8: Gráfico de Linhas Oportunidades de Ampliação da Formação", align='C')
 
     # pagina anexo
     pdf.add_page()
