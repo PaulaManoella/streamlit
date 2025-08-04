@@ -208,6 +208,27 @@ body,
     background: #f9f9f9;
 }
 
+/* width div para reduzir o tamanho dos graficos de CE */
+/* [data-testid="stImageContainer"]{
+    width: 80%;
+}
+
+/* alinhando grafico CE no centro  */
+/* [data-testid="stImage"]{
+    justify-content: center; */
+
+.stDownloadButton{
+    display: flex;
+    justify-content: center;
+}
+
+.stDownloadButton button{
+    border-radius: 1rem;
+    padding: .5rem 1.55rem;
+    border: 2px solid rgb(1 74 147 / 52%);
+
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .intro-card h2 {
@@ -243,7 +264,7 @@ body,
 .stMainBlockContainer {
     padding: 3rem 0;
     max-width: 100%;
-    width: 1080px;
+    width: 1200px;
 }
 
 .st-emotion-cache-bfgnao p {
@@ -302,6 +323,10 @@ body,
 .hero-section {
     background: white;
     border: solid 1px #f1f1f1;
+}
+
+.stImage img{
+    max-width: 80%;
 }
 
 @media screen and (min-width: 1900px) {

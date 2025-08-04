@@ -211,7 +211,7 @@ def plot_count_graph(course_code: int, questions_list) -> None:
 
     questions = [q.replace('QE_I', '') for q in questions_list]
 
-    fig, ax = plt.subplots(figsize=(10, 8))
+    fig, ax = plt.subplots(figsize=(10, 7.2))
 
     # Remover bordas
     for spine in ax.spines.values():
@@ -222,13 +222,18 @@ def plot_count_graph(course_code: int, questions_list) -> None:
     ax.plot(questions, tres_e_quatro, label='Discordo Parc. + Concordo Parc.', color='orange')
     ax.plot(questions, cinco_e_seis, label='Concordo + Concordo Totalmente', color='green')
     ax.plot(questions, sete_e_oito, label='Não sei responder + Não se aplica', color='gray')
+    
+    ax.tick_params(axis='x', labelsize=16)
+    
+    ax.legend(
+    loc='lower center',       # Posição relativa à âncora
+    bbox_to_anchor=(0.5, 1.0),  # Âncora acima do gráfico (x=50%, y=2% acima da caixa)
+    fontsize=16,
+    ncol=2)
+    
+    
 
-    # ax.set_title("Distribuição das Respostas por Questão")
-    # ax.set_xlabel("Questão")
-    # ax.set_ylabel("Contagem de Respostas")
-    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
-
-    plt.tight_layout()
+    # plt.tight_layout()
 
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
         fig.savefig(tmp_img.name)
@@ -236,78 +241,6 @@ def plot_count_graph(course_code: int, questions_list) -> None:
         count_chart_img = tmp_img.name
 
     return None, count_chart_img
-
-# def plot_average_graph(course_code: int, questions_list, question_text):
-#     course_ufpa_df = QE_data_2023[
-#         (QE_data_2023["CO_CURSO"] == course_code) &
-#         (QE_data_2023["TP_PRES"] == PRESENT_STUDENT_CODE) &
-#         (QE_data_2023["TP_PR_GER"] == PRESENT_STUDENT_CODE)
-#     ]
-
-#     questions_average = []
-#     for question in questions_list:
-#         values = course_ufpa_df[~course_ufpa_df[question].isin([7, 8])][question].values
-#         questions_average.append(round(np.mean(values), 2))
-
-#     question_labels = [q.replace('QE_I', '') for q in questions_list]
-
-#     df = pd.DataFrame({
-#         'num_questao': question_labels,
-#         'media_questao': questions_average,
-#         'texto_questao': question_text
-#     })
-
-#     df['cor'] = df['media_questao'].apply(
-#         lambda val: '#00712D' if val == df['media_questao'].max()
-#         else '#F09319' if val == df['media_questao'].min()
-#         else '#81A263'
-#     )
-
-#     graph = px.bar(
-#         df, x='num_questao', y='media_questao',
-#         color='cor', color_discrete_map="identity",
-#         text='media_questao',
-#         custom_data=['texto_questao']
-#     )
-
-#     graph.update_layout(
-#         xaxis_type='category',
-#         xaxis=dict(categoryorder='array', categoryarray=question_labels),
-#         hoverlabel=dict(
-#             bgcolor="white", font_size=16, namelength=-1, align='left'
-#         ),
-#         legend=dict(
-#             orientation="h", yanchor="bottom", y=1.02,
-#             xanchor="left", x=0, font=dict(size=14)
-#         ),
-#         yaxis_title=None,
-#         xaxis_title=None
-#     )
-
-#     graph.update_traces(
-#         textposition='outside',
-#         hovertemplate="<b>Questão %{x}:</b> %{customdata[0]}",
-#         showlegend=True,
-#         textfont_size=13.5
-#     )
-
-#     # Nomear as legendas manualmente
-#     graph.data[1].name = 'Maior média'
-#     graph.data[2].name = 'Menor média'
-#     graph.data[0].showlegend = False
-
-#     # ✅ Renderiza imagem em memória com plotly.io
-#     buf = BytesIO()
-#     img_bytes = pio.to_image(graph, format="png")
-#     buf.write(img_bytes)
-#     buf.seek(0)
-
-#     # ✅ Salva em arquivo temporário para uso no PDF
-#     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
-#         tmp_img.write(buf.read())
-#         average_chart_img = tmp_img.name
-
-#     return graph, average_chart_img
   
 def plot_average_graph(course_code: int, questions_list, question_text):
     course_ufpa_df = QE_data_2023[
@@ -330,33 +263,57 @@ def plot_average_graph(course_code: int, questions_list, question_text):
     })
 
     # Definindo cores conforme maior e menor média
+    # Definindo cores conforme maior e menor média
     max_val = df['media_questao'].max()
     min_val = df['media_questao'].min()
 
-    df['cor'] = df['media_questao'].apply(
-        lambda val: '#00712D' if val == max_val else '#F09319' if val == min_val else '#81A263'
-    )
+    def define_cor_e_legenda(val):
+        if val == max_val:
+            return '#00712D', 'Maior média'
+        elif val == min_val:
+            return '#F09319', 'Menor média'
+        else:
+            return '#81A263', None  # Nenhuma legenda para as barras intermediárias
 
-    # Criar gráfico com matplotlib
-    fig, ax = plt.subplots(figsize=(10, 8))
-    bars = ax.bar(df['num_questao'], df['media_questao'], color=df['cor'])
+    # Aplica função
+    df[['cor', 'legenda']] = df['media_questao'].apply(lambda val: pd.Series(define_cor_e_legenda(val)))
 
-    # Adicionar rótulos
-    for bar, value in zip(bars, df['media_questao']):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.05,
-                f'{value:.2f}', ha='center', va='bottom', fontsize=15)
+    # Criar gráfico
+    fig, ax = plt.subplots(figsize=(13, 9))
 
-    # ax.set_title('Média por Questão')
-    # ax.set_xlabel('Questão')
-    # ax.set_ylabel('Média')
-    # ax.set_ylim(0, max(df['media_questao']) + 1)
-    # ax.
-    
-    # Remover bordas do gráfico
+    # Plotar uma barra de cada vez, incluindo apenas as que têm legenda
+    for idx, row in df.iterrows():
+        ax.bar(row['num_questao'], row['media_questao'], color=row['cor'], label=row['legenda'])
+
+        # Adiciona valor acima da barra
+        ax.text(row['num_questao'], row['media_questao'] + 0.05,
+                f'{row["media_questao"]:.2f}', ha='center', va='bottom', fontsize=17)
+
+    # Estiliza eixo x
+    ax.tick_params(axis='x', labelsize=19)
+
+    # Remove bordas
     for spine in ax.spines.values():
         spine.set_visible(False)
 
+# aumenta o espaço do topo da figura para inserir a legenda
+    plt.subplots_adjust(top=0.85)
+
+# Adiciona legenda no canto superior esquerdo (fora do gráfico)
+    ax.legend(
+        loc='upper left',
+        bbox_to_anchor=(-0.01, 1.15),  # x levemente fora à esquerda, y acima do gráfico
+        fontsize=19
+    ) 
+
+#     ax.legend(
+#     loc='upper right',       # Posição relativa à âncora
+#     bbox_to_anchor=(0.5, 1.08),  # Âncora acima do gráfico (x=50%, y=2% acima da caixa)
+#     fontsize=16                # Opcional: legenda em 2 colunas
+# )
+
     plt.tight_layout()
+
 
     # Salvar como imagem para o PDF
     with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
@@ -393,12 +350,9 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
     if ratio_graph:
         title = (
             f"Razão do percentual de acerto UFPA Brasil em {COURSE_CODES[course_code][1]} "
-            f" {COURSE_CODES[course_code][3]} por tema no Enade 2023"
-            f"Razão do percentual de acerto UFPA Brasil em {COURSE_CODES[course_code][1]} "
-            f" {COURSE_CODES[course_code][3]} por tema no Enade 2023"
-        )
+            f" {COURSE_CODES[course_code][3]} por tema no Enade 2023")
 
-        fig1, ax = plt.subplots(figsize=(6, 6))
+        fig1, ax = plt.subplots(figsize=(8,8))
 
         ax.spines[['top', 'right']].set_visible(False)
         ax.axvline(x=1.0, color="red")
@@ -432,10 +386,6 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
         plt.xlim(min_xlim - r, 2 - min_xlim + r)
 
         fig1.suptitle(title, fontsize=15, x=0.25, y=0.93)  
-        
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img1:
-            fig1.savefig(tmp_img1.name, dpi=150, bbox_inches='tight')
-            fig1_img = tmp_img1.name
         
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img1:
             fig1.savefig(tmp_img1.name, dpi=150, bbox_inches='tight')
@@ -479,7 +429,7 @@ def plot_performance_graph(group_code: int, course_code: int, ratio_graph=True, 
         plt.xlim(0, 100)
         plt.gca().invert_yaxis()
 
-        fig2.suptitle(title, fontsize=18, x=0.28, y=0.93)
+        fig2.suptitle(title, fontsize=16, x=0.28, y=0.93)
 
         with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img2:
             fig2.savefig(tmp_img2.name, dpi=150, bbox_inches='tight')
@@ -603,12 +553,13 @@ def generate_pdf():
     pdf.cell(0, 10, "Organização Didático Pedagógica", ln=True)
     pdf.ln(3)
     pdf.set_font("Times", size=12)
-    pdf.image(st.session_state['odp_img_av'], x=10, w=180)
+    pdf.image(st.session_state['odp_img_av'], x=30, w=150)
     pdf.set_font("Times", size=11)
     pdf.set_text_color(0, 0, 0)   
+    pdf.ln(5)
     pdf.cell(0,0,"Figura 3: Gráfico de Médias Organização Didático-Pedagógica", align='C')
-    
-    pdf.image(st.session_state['odp_img_co'], x=10, w=180)
+    pdf.ln(15)
+    pdf.image(st.session_state['odp_img_co'], x=30, w=150)
     pdf.set_font("Times", size=11)
     pdf.cell(0,0,"Figura 4: Gráfico de Linhas Organização Didático-Pedagógica", align='C')
 
@@ -618,21 +569,38 @@ def generate_pdf():
     pdf.set_text_color(19, 81, 180)    
     pdf.cell(0, 10, "Infraestrutura e Instalações Físicas", ln=True)
     
-    pdf.image(st.session_state['infra_img_av'], x=10, w=180)
-    pdf.ln(1)
-    pdf.image(st.session_state['infra_img_co'], x=10, w=180)
+    pdf.image(st.session_state['infra_img_av'], x=30, w=150)
+    pdf.set_font("Times", size=11)
+    pdf.set_text_color(0, 0, 0)   
+    pdf.ln(5)
+    pdf.cell(0,0,"Figura x: Gráfico de Médias Infraestrutura e Instalações Físicas", align='C')
+    
+    pdf.ln(15)
+    pdf.image(st.session_state['infra_img_co'], x=30, w=150)
+    pdf.set_font("Times", size=11)
+    pdf.cell(0,0,"Figura x: Gráfico de Linhas Infraestrutura e Instalações Físicas", align='C')
 
     ### Página 5 – Oportunidades de Ampliação da Formação
     pdf.add_page()
+    pdf.set_font("Times", "B", 16)
+    pdf.set_text_color(19, 81, 180)    
     pdf.cell(0, 10, "Oportunidades de Ampliação da Formação", ln=True)
-    pdf.image(st.session_state['oaf_img_av'], x=10, w=180)
-    pdf.ln(3)
-    pdf.image(st.session_state['oaf_img_co'], x=10, w=180)
+    pdf.image(st.session_state['oaf_img_av'], x=30, w=150)
+    pdf.set_font("Times", size=11)
+    pdf.set_text_color(0, 0, 0)   
+    pdf.ln(5)
+    pdf.cell(0,0,"Figura x: Gráfico de Médias Oportunidades de Ampliação da Formação", align='C')
+    pdf.ln(15)
     
+    pdf.image(st.session_state['oaf_img_co'], x=30, w=150)
+    pdf.set_font("Times", size=11)
+    pdf.cell(0,0,"Figura x: Gráfico de Linhas Oportunidades de Ampliação da Formação", align='C')
+
     # pagina anexo
     pdf.add_page()
     pdf.set_y(100)
     pdf.set_font("Times", "B", 19)
+    pdf.set_text_color(19, 81, 180)    
     pdf.cell(0, 10, "Anexo Questionário do Estudante", ln=True, align='L')
 
     # Salvar em arquivo temporário
@@ -667,36 +635,6 @@ def generate_pdf():
 
     # Agora `caminho_final` é o PDF completo
     return caminho_final    
-
-#     anexo_path = "anexo_qe_2023.pdf"  # <- substitua com o caminho real
-
-# # Novo PDF combinando ambos
-#     with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as final_pdf:
-#         writer = PdfWriter()
-
-#         # Adiciona páginas do PDF gerado com fpdf
-#         reader_fpdf = PdfReader(anexo_path)
-#         for page in reader_fpdf.pages:
-#             writer.add_page(page)
-
-#         # Adiciona páginas do PDF existente
-#         reader_existente = PdfReader(anexo_path)
-#         for page in reader_existente.pages:
-#             writer.add_page(page)
-
-#         # Escreve o PDF final
-#         writer.write(final_pdf)
-#         return final_pdf.name
-
-    
-    # Botão de download
-    # with open(temp_pdf_path, "rb") as f:
-    #     st.download_button(
-    #         "📄 Baixar PDF com Gráficos",
-    #         data=f,
-    #         file_name="graficos_dimensoes.pdf",
-    #         mime="application/pdf"
-    #     ) 
        
 def get_subjects_per_question(questions_subjects_df: pd.DataFrame) -> pd.Series:
 
@@ -711,12 +649,10 @@ def get_subjects_per_question(questions_subjects_df: pd.DataFrame) -> pd.Series:
     )
     return subjects_per_question.values
 
-
 def get_invalid_subjects(questions_subjects_df: pd.DataFrame) -> list:
     invalid_subjects = questions_subjects_df.groupby("FIRST_SUBJECT")["VALIDITY"].any()
     invalid_subjects = invalid_subjects[~invalid_subjects].index.tolist()
     return invalid_subjects
-
 
 def get_score_per_subject(questions_subjects_df: pd.DataFrame, df: pd.DataFrame) -> pd.DataFrame:
 
