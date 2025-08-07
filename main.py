@@ -511,14 +511,14 @@ def generate_pdf():
     # graficos conhecimento especifico
     pdf.add_page()
     pdf.ln(10)
-    pdf.image(st.session_state['razao_chart'], x=10, w=160)
+    pdf.image(st.session_state['razao_chart'], x=20, w=160)
     pdf.ln(2)
     pdf.set_font("Times", size=11)
     pdf.ln(2)
     pdf.cell(0,0,"Figura 1: Gráfico Razão do Percentual", align='C')
-   # pdf.ln(3)
+    pdf.ln(4)
 
-    pdf.image(st.session_state['percent_chart'], x=10, w=160)
+    pdf.image(st.session_state['percent_chart'], x=20, w=160)
     pdf.ln(1)
     pdf.set_font("Times", size=11)
     pdf.cell(0,0,"Figura 2: Gráfico Percentual do Acerto", align='C')
