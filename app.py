@@ -92,7 +92,7 @@ if page == "🏠 Página Inicial":
             <p>A CPA, em parceria com a DIAVI/PROPLAN, apresenta as análises descritivas dos microdados do Enade 2023, com o objetivo de auxiliar as coordenações na identificação de fragilidades para subdisiar ações corretivas e preventivas nos cursos de gradução.</p>
             <p>As análises compreendem os temas do <b>Componente Específico</b> da prova do Enade e as questões do <b>Questionário do Estudante</b>, relativas às dimensões <b>Organização Didático-pedagógica</b>, <b>Infraestrutura e Instalações Físicas</b> e <b>Oportunidade Ampliação da Formação Profissional</b>.</p>
             <p>Para visualizar as análises, utilize o menu lateral para navegar entre as páginas <b>Conhecimento Específico</b> e <b>Questionário do Estudante</b>. </p>
-            <p>A análise referente ao Componente Específico da prova do Enade foi desenvolvida por <b>Cunha, Sales e Santos (2021)</b>, conforme apresentado no artigo disponível em: https://doi.org/10.5753/wei.2021.15912.</p>
+            <p>A análise referente ao Componente Específico da prova do Enade foi desenvolvida por <b>Cunha, Sales e Santos (2021)</b>, conforme apresentado no artigo disponível em: <a href="https://doi.org/10.5753/wei.2021.15912">https://doi.org/10.5753/wei.2021.15912.</a></p>
         </div>
     </div>
     """, unsafe_allow_html=True)
