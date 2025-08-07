@@ -516,7 +516,7 @@ def generate_pdf():
     pdf.set_font("Times", size=11)
     pdf.ln(2)
     pdf.cell(0,0,"Figura 1: Gráfico Razão do Percentual", align='C')
-    pdf.ln(5)
+    pdf.ln(3)
 
     pdf.image(st.session_state['percent_chart'], x=10, w=180)
     pdf.ln(1)

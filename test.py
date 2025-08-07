@@ -1,13 +1,18 @@
-import plotly.express as px
-import plotly.io as pio
-import tempfile
+import streamlit as st
 
-fig = px.line(x=["Q1", "Q2", "Q3"], y=[[10, 20, 30], [15, 25, 35], [20, 30, 40], [5, 10, 15]])
+# Dicionário com opções conectadas
+opcoes = {
+    "Frutas": ["Maçã", "Banana", "Laranja", "Manga"],
+    "Animais": ["Cachorro", "Gato", "Papagaio", "Peixe"],
+    "Cores": ["Vermelho", "Azul", "Verde", "Amarelo"]
+}
 
-colors = ['red', 'orange', 'green', 'gray']
-for i, color in enumerate(colors):
-    fig.data[i].line.color = color
+st.title("Selectbox Conectados")
 
-with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as tmp_img:
-    fig.write_image(tmp_img.name, engine="kaleido")
-    print("Imagem salva em:", tmp_img.name)
+# Primeiro selectbox (categoria)
+categoria = st.selectbox("Escolha uma categoria:", list(opcoes.keys()))
+
+# Segundo selectbox (opções filtradas pela categoria)
+item = st.selectbox(f"Escolha um item de {categoria}:", opcoes[categoria])
+
+st.write(f"Você escolheu: **{item}** da categoria **{categoria}**.")

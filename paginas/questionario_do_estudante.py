@@ -24,38 +24,52 @@ def show_page():
         """, unsafe_allow_html=True)
 
         col1, col2 = st.columns([0.5, 0.5])
+        
+        if 'municipio_op' not in st.session_state:
+            st.session_state['municipio_op'] = municipios[0]
 
-        municipio_op = st.session_state.get('municipio_op', municipios[0])
+        # Inicializa cursos com base no município inicial
+        cursos_iniciais = atualiza_cursos(st.session_state['municipio_op'])
 
+        if 'curso_op' not in st.session_state:
+            st.session_state['curso_op'] = cursos_iniciais[0]
+
+        # Funções para atualizar no on_change
+        def atualizar_municipio():
+            st.session_state['municipio_op'] = st.session_state['municipio']
+            # Atualiza curso para o primeiro disponível do município selecionado
+            novos_cursos = atualiza_cursos(st.session_state['municipio_op'])
+            st.session_state['curso_op'] = novos_cursos[0]
+
+        def atualizar_curso():
+            st.session_state['curso_op'] = st.session_state['curso']
+
+        # Selectbox de município
         with col1:
             st.selectbox(
                 "Selecione o Município",
                 municipios,
-                index=municipios.index(municipio_op),
-                key='municipio'
+                index=municipios.index(st.session_state['municipio_op']),
+                key='municipio',
+                on_change=atualizar_municipio
             )
 
-        # Atualiza a variável persistente se o usuário trocar a seleção
-        st.session_state['municipio_op'] = st.session_state['municipio']
+        # Atualiza lista de cursos com base no município atual
+        cursos = atualiza_cursos(st.session_state['municipio_op'])
 
+        # Garantia de que o curso atual existe na lista
+        if st.session_state['curso_op'] not in cursos:
+            st.session_state['curso_op'] = cursos[0]
 
-        # Agora atualiza os cursos com base no município selecionado
-        cursos = atualiza_cursos(st.session_state['municipio'])
-        curso_op = st.session_state.get('curso_op', cursos[0])
-
-        # Verifica se o curso salvo ainda existe para aquele município
-        if curso_op not in cursos:
-            curso_op = cursos[0]
-
+        # Selectbox de curso
         with col2:
             st.selectbox(
                 "Selecione o Curso",
                 cursos,
-                index=cursos.index(curso_op),
-                key='curso'
+                index=cursos.index(st.session_state['curso_op']),
+                key='curso',
+                on_change=atualizar_curso
             )
-
-        st.session_state['curso_op'] = st.session_state['curso']
         
         col1, col2, col3 = st.columns(3)
         tab1, tab2, tab3, tab4 = st.tabs(["Organização Didático Pedagógica", "Infraestrutura e Instalações Físicas", "Oportunidades de Ampliação da Formação", "Questionário do Estudante"])

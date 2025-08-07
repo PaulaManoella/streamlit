@@ -27,25 +27,34 @@ def show_page():
 
         col1, col2 = st.columns(2)
         #se nao ha nenhumaopção selecionada, pega o primeiro valor de municipios/atualiza_cursos
+        
+        #esse codigo funcionou para o comportamento dos filtros
         if 'municipio_op' not in st.session_state:
             st.session_state['municipio_op'] = municipios[0]
 
         if 'curso_op' not in st.session_state:
             st.session_state['curso_op'] = atualiza_cursos(st.session_state['municipio_op'])[0]
 
+        # Callback para atualizar curso ao mudar município
+        def atualizar_curso():
+            cursos_disponiveis = atualiza_cursos(st.session_state['municipio_op'])
+            # Se o curso atual não estiver disponível, define como o primeiro da nova lista
+            if st.session_state['curso_op'] not in cursos_disponiveis:
+                st.session_state['curso_op'] = cursos_disponiveis[0]
+
         with col1:
             st.selectbox(
                 "Selecione o Município",
                 municipios,
                 index=municipios.index(st.session_state['municipio_op']),
-                key='municipio'
+                key='municipio_op',
+                on_change=atualizar_curso
             )
 
-        #atualiza a opção quando mudada
-        st.session_state['municipio_op'] = st.session_state['municipio']
+        # Lista de cursos já filtrada
+        cursos = atualiza_cursos(st.session_state['municipio_op'])
 
-        cursos = atualiza_cursos(st.session_state['municipio'])
-
+        # Garantir que curso_op está na lista
         if st.session_state['curso_op'] not in cursos:
             st.session_state['curso_op'] = cursos[0]
 
@@ -54,9 +63,11 @@ def show_page():
                 'Selecione o Curso',
                 cursos,
                 index=cursos.index(st.session_state['curso_op']),
-                key='curso'
+                key='curso_op'
             )
-        st.session_state['curso_op'] = st.session_state['curso']         
+
+            
+        # st.session_state['curso_op'] = st.session_state['curso']         
                 
         tab1, tab2, tab3= st.tabs(["Gráfico Razão do Percentual", "Gráfico Percentual", "Tabela Ranking"])
         
